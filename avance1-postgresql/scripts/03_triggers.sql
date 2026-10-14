@@ -169,3 +169,108 @@ BEGIN
     END;
 END;
 $$;
+
+-- TRIGGER 3
+-- Validar que una sala no se coloque inactiva o en mantenimiento
+-- si tiene funciones programadas
+
+DROP TRIGGER IF EXISTS trg_validar_estado_sala ON salas;
+
+CREATE OR REPLACE FUNCTION fn_validar_estado_sala()
+RETURNS TRIGGER AS $$
+DECLARE
+    v_funciones INT;
+BEGIN
+    -- Revisar si la sala cambia de estado
+    IF OLD.estado = 'ACTIVA'
+       AND NEW.estado IN ('INACTIVA', 'MANTENIMIENTO') THEN
+
+        -- Contar las funciones programadas
+        SELECT COUNT(*)
+        INTO v_funciones
+        FROM funciones
+        WHERE id_sala = NEW.id_sala
+          AND estado = 'PROGRAMADA'
+          AND fecha_hora >= CURRENT_TIMESTAMP;
+
+        -- Impedir el cambio si existen funciones programadas
+        IF v_funciones > 0 THEN
+            RAISE EXCEPTION
+            'La sala % tiene % funcion(es) programada(s) y no puede cambiar de estado',
+            NEW.nombre,
+            v_funciones;
+        END IF;
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+
+-- Crear el trigger
+
+CREATE TRIGGER trg_validar_estado_sala
+BEFORE UPDATE OF estado
+ON salas
+FOR EACH ROW
+EXECUTE FUNCTION fn_validar_estado_sala();
+
+
+-- CASO DE EXITO
+-- Consultar las salas activas que tienen 2 funciones programadas futuras
+
+SELECT
+    s.id_sala,
+    s.nombre,
+    s.estado,
+    COUNT(f.id_funcion) AS funciones_programadas
+FROM salas s
+LEFT JOIN funciones f
+    ON f.id_sala = s.id_sala
+    AND f.estado = 'PROGRAMADA'
+    AND f.fecha_hora >= CURRENT_TIMESTAMP
+WHERE s.estado = 'ACTIVA'
+GROUP BY s.id_sala, s.nombre, s.estado
+HAVING COUNT(f.id_funcion) = 2
+ORDER BY s.id_sala;
+
+
+-- CASO DE ERROR
+-- Intentar desactivar una sala ACTIVA con funciones programadas futuras
+
+DO $$
+DECLARE
+    v_id_sala INT;
+BEGIN
+    SELECT s.id_sala
+    INTO v_id_sala
+    FROM salas s
+    WHERE s.estado = 'ACTIVA'
+      AND EXISTS (
+          SELECT 1
+          FROM funciones f
+          WHERE f.id_sala = s.id_sala
+            AND f.estado = 'PROGRAMADA'
+            AND f.fecha_hora >= CURRENT_TIMESTAMP
+      )
+    LIMIT 1;
+
+    IF v_id_sala IS NULL THEN
+        RAISE NOTICE
+        'CASO DE ERROR NO EJECUTADO: No existe una sala ACTIVA con funciones programadas futuras.';
+    ELSE
+        BEGIN
+            UPDATE salas
+            SET estado = 'INACTIVA'
+            WHERE id_sala = v_id_sala;
+
+            RAISE NOTICE
+            'La sala cambio de estado, no se produjo el error esperado.';
+
+        EXCEPTION
+            WHEN OTHERS THEN
+                RAISE NOTICE 'CASO DE ERROR: %', SQLERRM;
+        END;
+    END IF;
+END;
+$$;
