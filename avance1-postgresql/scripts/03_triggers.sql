@@ -408,3 +408,184 @@ BEGIN
     END IF;
 END;
 $$;
+
+-- TRIGGER 5
+-- Validar que no se desactive un tipo de boleta
+-- que ya tenga ventas pagadas
+
+DROP TRIGGER IF EXISTS trg_validar_desactivar_tipo_boleta
+ON tipos_boleta;
+
+CREATE OR REPLACE FUNCTION fn_validar_desactivar_tipo_boleta()
+RETURNS TRIGGER AS $$
+DECLARE
+    v_ventas INT;
+BEGIN
+    -- Revisar si el tipo de boleta se quiere desactivar
+    IF OLD.activo = TRUE
+       AND NEW.activo = FALSE THEN
+
+        -- Contar las ventas pagadas
+        SELECT COUNT(*)
+        INTO v_ventas
+        FROM ventas
+        WHERE id_tipo_boleta = NEW.id_tipo_boleta
+          AND estado = 'PAGADA';
+
+        -- Impedir la desactivacion si tiene ventas pagadas
+        IF v_ventas > 0 THEN
+            RAISE EXCEPTION
+            'No se puede desactivar el tipo de boleta %, tiene % venta(s) pagada(s)',
+            NEW.nombre,
+            v_ventas;
+        END IF;
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+
+-- Crear el trigger
+
+CREATE TRIGGER trg_validar_desactivar_tipo_boleta
+BEFORE UPDATE OF activo
+ON tipos_boleta
+FOR EACH ROW
+EXECUTE FUNCTION fn_validar_desactivar_tipo_boleta();
+
+
+-- CASO DE EXITO
+-- Consultar los tipos de boleta activos que no tienen ventas pagadas
+
+SELECT
+    tb.id_tipo_boleta,
+    tb.nombre,
+    tb.activo,
+    COUNT(v.id_venta) AS ventas_pagadas
+FROM tipos_boleta tb
+LEFT JOIN ventas v
+    ON v.id_tipo_boleta = tb.id_tipo_boleta
+    AND v.estado = 'PAGADA'
+GROUP BY
+    tb.id_tipo_boleta,
+    tb.nombre,
+    tb.activo
+ORDER BY tb.id_tipo_boleta;
+
+
+-- CASO DE ERROR
+-- Intentar desactivar un tipo de boleta
+-- que tenga ventas pagadas
+
+DO $$
+DECLARE
+    v_id_tipo_boleta INT;
+BEGIN
+    -- Buscar un tipo de boleta activo que tenga ventas pagadas
+    SELECT tb.id_tipo_boleta
+    INTO v_id_tipo_boleta
+    FROM tipos_boleta tb
+    JOIN ventas v
+        ON v.id_tipo_boleta = tb.id_tipo_boleta
+    WHERE tb.activo = TRUE
+      AND v.estado = 'PAGADA'
+    GROUP BY tb.id_tipo_boleta
+    LIMIT 1;
+
+    IF v_id_tipo_boleta IS NULL THEN
+        RAISE NOTICE
+        'CASO DE ERROR NO EJECUTADO: No hay tipos de boleta activos con ventas pagadas.';
+    ELSE
+        BEGIN
+            UPDATE tipos_boleta
+            SET activo = FALSE
+            WHERE id_tipo_boleta = v_id_tipo_boleta;
+
+            RAISE NOTICE
+            'La desactivacion fue aceptada; no se produjo el error esperado.';
+
+        EXCEPTION
+            WHEN OTHERS THEN
+                RAISE NOTICE 'CASO DE ERROR: %', SQLERRM;
+        END;
+    END IF;
+END;
+$$;
+
+-- TRIGGER 6
+-- Validar las fechas del espectador
+
+DROP TRIGGER IF EXISTS trg_validar_fechas_espectador
+ON espectadores;
+
+CREATE OR REPLACE FUNCTION fn_validar_fechas_espectador()
+RETURNS TRIGGER AS $$
+BEGIN
+    -- Validar que la fecha de nacimiento no sea futura
+    IF NEW.fecha_nacimiento > CURRENT_DATE THEN
+        RAISE EXCEPTION
+        'La fecha de nacimiento del espectador no puede ser futura';
+    END IF;
+
+    -- Validar que la fecha de registro no sea futura
+    IF NEW.fecha_registro > CURRENT_TIMESTAMP THEN
+        RAISE EXCEPTION
+        'La fecha de registro del espectador no puede ser futura';
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+
+-- Crear el trigger
+
+CREATE TRIGGER trg_validar_fechas_espectador
+BEFORE INSERT OR UPDATE
+ON espectadores
+FOR EACH ROW
+EXECUTE FUNCTION fn_validar_fechas_espectador();
+
+
+-- CASO DE EXITO
+-- Consultar los espectadores y sus fechas registradas
+
+SELECT
+    id_espectador,
+    nombres,
+    apellidos,
+    fecha_nacimiento,
+    fecha_registro
+FROM espectadores
+ORDER BY id_espectador;
+
+
+-- CASO DE ERROR
+-- Intentar registrar un espectador con fecha de nacimiento futura
+
+DO $$
+BEGIN
+    BEGIN
+        INSERT INTO espectadores (
+            nombres,
+            apellidos,
+            fecha_nacimiento,
+            fecha_registro
+        )
+        VALUES (
+            'Pedro',
+            'Prueba',
+            '2030-01-01',
+            CURRENT_TIMESTAMP
+        );
+
+        RAISE NOTICE
+        'La insercion fue aceptada; no se produjo el error esperado.';
+
+    EXCEPTION
+        WHEN OTHERS THEN
+            RAISE NOTICE 'CASO DE ERROR: %', SQLERRM;
+    END;
+END;
+$$;
