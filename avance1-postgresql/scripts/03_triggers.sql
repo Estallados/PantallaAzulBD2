@@ -589,3 +589,59 @@ BEGIN
     END;
 END;
 $$;
+
+-- TRIGGER 7
+-- Validar que un empleado no tenga una fecha de ingreso futura
+
+DROP TRIGGER IF EXISTS trg_validar_fecha_staff ON staff;
+
+CREATE OR REPLACE FUNCTION fn_validar_fecha_staff()
+RETURNS TRIGGER AS $$
+BEGIN
+    -- Revisar la fecha de ingreso
+    IF NEW.fecha_ingreso > CURRENT_DATE THEN
+        RAISE EXCEPTION
+        'La fecha de ingreso del empleado no puede ser futura';
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+
+-- Crear el trigger
+
+CREATE TRIGGER trg_validar_fecha_staff
+BEFORE INSERT OR UPDATE
+ON staff
+FOR EACH ROW
+EXECUTE FUNCTION fn_validar_fecha_staff();
+
+
+-- CASO DE EXITO
+-- Consultar los empleados y sus fechas de ingreso
+
+SELECT
+    *
+FROM staff
+ORDER BY fecha_ingreso;
+
+
+-- CASO DE ERROR
+-- Intentar registrar un empleado con fecha de ingreso futura
+
+DO $$
+BEGIN
+    BEGIN
+        INSERT INTO staff (fecha_ingreso)
+        VALUES ('2030-01-01');
+
+        RAISE NOTICE
+        'La insercion fue aceptada; no se produjo el error esperado.';
+
+    EXCEPTION
+        WHEN OTHERS THEN
+            RAISE NOTICE 'CASO DE ERROR: %', SQLERRM;
+    END;
+END;
+$$;
