@@ -326,3 +326,309 @@ CALL mantenimiento_sala(
     CURRENT_DATE + 5,
     CURRENT_DATE + 2
 );
+
+-- PROCEDIMIENTO 4 - VENDER BOLETAS
+-- Aqui se hace el proceso para registrar una venta
+-- revisando que los datos sean validos
+
+DROP PROCEDURE IF EXISTS vender_boletas(
+    INTEGER, INTEGER, INTEGER, INTEGER, VARCHAR, INTEGER
+);
+
+CREATE OR REPLACE PROCEDURE vender_boletas(
+    p_id_espectador INTEGER,
+    p_id_funcion INTEGER,
+    p_id_tipo_boleta INTEGER,
+    p_cantidad INTEGER,
+    p_canal VARCHAR(10),
+    OUT p_id_venta INTEGER,
+    p_id_staff INTEGER DEFAULT NULL
+)
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    v_funcion RECORD;
+    v_tipo RECORD;
+    v_edad INTEGER;
+    v_edad_minima INTEGER;
+    v_vendidas INTEGER;
+    v_disponibles INTEGER;
+    v_precio NUMERIC(10,2);
+    v_cargo VARCHAR(25);
+    v_staff_activo BOOLEAN;
+BEGIN
+
+    -- Se revisa la cantidad de boletas
+    IF p_cantidad IS NULL OR p_cantidad < 1 OR p_cantidad > 10 THEN
+        RAISE EXCEPTION
+        'La cantidad debe estar entre 1 y 10';
+    END IF;
+
+    -- Aqui se revisa el canal de la venta
+    IF p_canal IS NULL
+       OR p_canal NOT IN ('TAQUILLA', 'WEB') THEN
+        RAISE EXCEPTION
+        'Canal invalido: %',
+        p_canal;
+    END IF;
+
+    -- Se revisa que el espectador exista
+    PERFORM 1
+    FROM espectadores
+    WHERE id_espectador = p_id_espectador;
+
+    IF NOT FOUND THEN
+        RAISE EXCEPTION
+        'El espectador % no existe',
+        p_id_espectador;
+    END IF;
+
+    -- Aqui se obtiene la informacion de la funcion
+    SELECT
+        f.fecha_hora,
+        f.precio_base,
+        f.estado AS estado_funcion,
+        s.capacidad,
+        s.estado AS estado_sala,
+        c.clasificacion,
+        c.titulo_obra,
+        c.estado AS estado_contrato,
+        a.activo AS artista_activo
+    INTO v_funcion
+    FROM funciones f
+    JOIN salas s
+        ON s.id_sala = f.id_sala
+    JOIN contratos c
+        ON c.id_contrato = f.id_contrato
+    JOIN actores_directores a
+        ON a.id_artista = c.id_artista
+    WHERE f.id_funcion = p_id_funcion
+    FOR UPDATE OF f;
+
+    -- Se revisa que la funcion exista
+    IF NOT FOUND THEN
+        RAISE EXCEPTION
+        'La funcion % no existe',
+        p_id_funcion;
+    END IF;
+
+    -- Solo se venden funciones programadas
+    IF v_funcion.estado_funcion <> 'PROGRAMADA' THEN
+        RAISE EXCEPTION
+        'La funcion % esta en estado %',
+        p_id_funcion,
+        v_funcion.estado_funcion;
+    END IF;
+
+    -- Se revisa que la funcion no haya comenzado
+    IF v_funcion.fecha_hora <= NOW() THEN
+        RAISE EXCEPTION
+        'La funcion % ya inicio',
+        p_id_funcion;
+    END IF;
+
+    -- Se revisa que la sala este activa
+    IF v_funcion.estado_sala <> 'ACTIVA' THEN
+        RAISE EXCEPTION
+        'La sala esta en estado %',
+        v_funcion.estado_sala;
+    END IF;
+
+    -- Se revisa que el contrato este vigente
+    IF v_funcion.estado_contrato <> 'VIGENTE' THEN
+        RAISE EXCEPTION
+        'El contrato de % no esta vigente',
+        v_funcion.titulo_obra;
+    END IF;
+
+    -- Se revisa que el artista este activo
+    IF NOT v_funcion.artista_activo THEN
+        RAISE EXCEPTION
+        'El artista se encuentra inactivo';
+    END IF;
+
+    -- Aqui se calcula la edad del espectador
+    SELECT DATE_PART(
+        'year',
+        AGE(CURRENT_DATE, fecha_nacimiento)
+    )::INTEGER
+    INTO v_edad
+    FROM espectadores
+    WHERE id_espectador = p_id_espectador;
+
+    -- Aqui se obtiene la edad minima de la pelicula
+    v_edad_minima :=
+        CASE v_funcion.clasificacion
+            WHEN 'TP' THEN 0
+            WHEN '7+' THEN 7
+            WHEN '12+' THEN 12
+            WHEN '15+' THEN 15
+            WHEN '18+' THEN 18
+        END;
+
+    -- Se revisa que la edad sea suficiente
+    IF v_edad_minima IS NULL THEN
+        RAISE EXCEPTION
+        'La clasificacion % no es valida',
+        v_funcion.clasificacion;
+    END IF;
+
+    IF v_edad IS NULL OR v_edad < v_edad_minima THEN
+        RAISE EXCEPTION
+        'Clasificacion %: el espectador tiene % años y necesita minimo %',
+        v_funcion.clasificacion,
+        v_edad,
+        v_edad_minima;
+    END IF;
+
+    -- Aqui se busca el tipo de boleta
+    SELECT factor_precio, activo
+    INTO v_tipo
+    FROM tipos_boleta
+    WHERE id_tipo_boleta = p_id_tipo_boleta;
+
+    -- Se revisa que el tipo de boleta exista
+    IF NOT FOUND THEN
+        RAISE EXCEPTION
+        'El tipo de boleta % no existe',
+        p_id_tipo_boleta;
+    END IF;
+
+    -- Se revisa que el tipo de boleta este activo
+    IF NOT v_tipo.activo THEN
+        RAISE EXCEPTION
+        'El tipo de boleta % esta inactivo',
+        p_id_tipo_boleta;
+    END IF;
+
+    -- Si la venta es por taquilla debe tener un empleado
+    IF p_canal = 'TAQUILLA' THEN
+
+        IF p_id_staff IS NULL THEN
+            RAISE EXCEPTION
+            'Una venta por taquilla debe tener un empleado';
+        END IF;
+
+        -- Aqui se busca el empleado
+        SELECT cargo, activo
+        INTO v_cargo, v_staff_activo
+        FROM staff
+        WHERE id_staff = p_id_staff;
+
+        -- Se revisa que el empleado exista
+        IF NOT FOUND THEN
+            RAISE EXCEPTION
+            'El empleado % no existe',
+            p_id_staff;
+        END IF;
+
+        -- Se revisa que el empleado este activo
+        IF NOT v_staff_activo THEN
+            RAISE EXCEPTION
+            'El empleado esta inactivo';
+        END IF;
+
+        -- Solo un taquillero puede registrar esta venta
+        IF v_cargo <> 'TAQUILLERO' THEN
+            RAISE EXCEPTION
+            'El empleado debe ser TAQUILLERO';
+        END IF;
+    END IF;
+
+    -- Aqui se cuentan las boletas que ya se vendieron
+    SELECT COALESCE(SUM(cantidad), 0)
+    INTO v_vendidas
+    FROM ventas
+    WHERE id_funcion = p_id_funcion
+      AND estado = 'PAGADA';
+
+    -- Aqui se calculan las sillas disponibles
+    v_disponibles := v_funcion.capacidad - v_vendidas;
+
+    -- Se revisa que haya suficientes sillas
+    IF p_cantidad > v_disponibles THEN
+        RAISE EXCEPTION
+        'Sillas insuficientes: % disponibles y % solicitadas',
+        v_disponibles,
+        p_cantidad;
+    END IF;
+
+    -- Aqui se calcula el precio de cada boleta
+    v_precio := ROUND(
+        v_funcion.precio_base * v_tipo.factor_precio,
+        2
+    );
+
+    -- Aqui se registra la venta
+    INSERT INTO ventas (
+        id_espectador,
+        id_funcion,
+        id_tipo_boleta,
+        id_staff,
+        cantidad,
+        valor_unitario,
+        canal,
+        estado
+    )
+    VALUES (
+        p_id_espectador,
+        p_id_funcion,
+        p_id_tipo_boleta,
+        p_id_staff,
+        p_cantidad,
+        v_precio,
+        p_canal,
+        'PAGADA'
+    )
+    RETURNING id_venta INTO p_id_venta;
+
+    RAISE NOTICE
+    'Venta % registrada: % boleta(s) a $% cada una',
+    p_id_venta,
+    p_cantidad,
+    v_precio;
+
+-- Aqui se manejan los errores
+EXCEPTION
+    WHEN OTHERS THEN
+        RAISE NOTICE
+        'Ocurrio un error al realizar la venta: %',
+        SQLERRM;
+--    RAISE;
+-- Se comenta el RAISE para que al ejecutarse un error,
+-- no se detenga el programa.
+
+END;
+$$;
+
+
+-- Prueba del caso exitoso
+-- Se usa una transaccion para recuperar los datos al final
+
+BEGIN;
+
+CALL vender_boletas(
+    1,
+    31,
+    1,
+    2,
+    'WEB',
+    NULL,
+    NULL
+);
+
+ROLLBACK;
+
+
+-- Prueba del caso de error
+-- Se intenta registrar una venta con un canal invalido
+
+CALL vender_boletas(
+    1,
+    31,
+    1,
+    2,
+    'TELEFONO',
+    NULL,
+    NULL
+);
