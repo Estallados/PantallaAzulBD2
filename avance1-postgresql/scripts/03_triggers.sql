@@ -645,3 +645,162 @@ BEGIN
     END;
 END;
 $$;
+-- TRIGGER 8
+-- Validar las ventas y calcular automaticamente el valor de la boleta
+
+DROP TRIGGER IF EXISTS trg_validar_venta ON ventas;
+
+CREATE OR REPLACE FUNCTION fn_validar_venta()
+RETURNS TRIGGER AS $$
+DECLARE
+    v_estado_funcion VARCHAR(12);
+    v_precio_base NUMERIC(10,2);
+    v_factor NUMERIC(3,2);
+    v_tipo_activo BOOLEAN;
+    v_cargo VARCHAR(25);
+    v_staff_activo BOOLEAN;
+BEGIN
+    -- Obtener informacion de la funcion
+    SELECT estado, precio_base
+    INTO v_estado_funcion, v_precio_base
+    FROM funciones
+    WHERE id_funcion = NEW.id_funcion;
+
+    IF v_estado_funcion IS NULL THEN
+        RAISE EXCEPTION 'La funcion % no existe', NEW.id_funcion;
+    END IF;
+
+    IF v_estado_funcion = 'CANCELADA' THEN
+        RAISE EXCEPTION 'No se pueden realizar ventas para una funcion cancelada';
+    END IF;
+
+    IF v_estado_funcion = 'FINALIZADA' THEN
+        RAISE EXCEPTION 'No se pueden realizar nuevas ventas para una funcion finalizada';
+    END IF;
+
+    -- Obtener el tipo de boleta
+    SELECT factor_precio, activo
+    INTO v_factor, v_tipo_activo
+    FROM tipos_boleta
+    WHERE id_tipo_boleta = NEW.id_tipo_boleta;
+
+    IF v_factor IS NULL THEN
+        RAISE EXCEPTION 'El tipo de boleta % no existe', NEW.id_tipo_boleta;
+    END IF;
+
+    IF v_tipo_activo = FALSE THEN
+        RAISE EXCEPTION 'El tipo de boleta seleccionado se encuentra inactivo';
+    END IF;
+
+    -- Calcular el valor unitario
+    NEW.valor_unitario := ROUND(v_precio_base * v_factor, 2);
+
+    -- Validar ventas por taquilla
+    IF NEW.canal = 'TAQUILLA' THEN
+        IF NEW.id_staff IS NULL THEN
+            RAISE EXCEPTION 'Una venta por taquilla debe registrar el empleado responsable';
+        END IF;
+
+        SELECT cargo, activo
+        INTO v_cargo, v_staff_activo
+        FROM staff
+        WHERE id_staff = NEW.id_staff;
+
+        IF v_cargo IS NULL THEN
+            RAISE EXCEPTION 'El empleado indicado no existe';
+        END IF;
+
+        IF v_staff_activo = FALSE THEN
+            RAISE EXCEPTION 'El empleado se encuentra inactivo';
+        END IF;
+
+        IF v_cargo <> 'TAQUILLERO' THEN
+            RAISE EXCEPTION 'El empleado debe tener cargo TAQUILLERO para realizar ventas por taquilla';
+        END IF;
+    END IF;
+
+    -- Las ventas web o app no necesitan empleado
+    IF NEW.canal IN ('WEB', 'APP') THEN
+        NEW.id_staff := NULL;
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+
+-- Crear el trigger
+
+CREATE TRIGGER trg_validar_venta
+BEFORE INSERT OR UPDATE
+ON ventas
+FOR EACH ROW
+EXECUTE FUNCTION fn_validar_venta();
+
+
+-- CASO DE EXITO
+-- Consultar las ventas y los valores calculados
+
+SELECT
+    v.id_venta,
+    v.id_funcion,
+    v.id_tipo_boleta,
+    v.cantidad,
+    v.canal,
+    v.estado,
+    v.valor_unitario,
+    ROUND(v.valor_unitario * v.cantidad, 2) AS valor_total
+FROM ventas v
+ORDER BY v.id_venta;
+
+
+-- CASO DE ERROR
+-- Intentar registrar una venta para una funcion cancelada
+
+DO $$
+DECLARE
+    v_id_funcion INT;
+    v_id_tipo_boleta INT;
+BEGIN
+    SELECT id_funcion
+    INTO v_id_funcion
+    FROM funciones
+    WHERE estado = 'CANCELADA'
+    LIMIT 1;
+
+    SELECT id_tipo_boleta
+    INTO v_id_tipo_boleta
+    FROM tipos_boleta
+    WHERE activo = TRUE
+    LIMIT 1;
+
+    IF v_id_funcion IS NULL OR v_id_tipo_boleta IS NULL THEN
+        RAISE NOTICE
+        'CASO DE ERROR NO EJECUTADO: Se necesita una funcion cancelada y un tipo de boleta activo.';
+    ELSE
+        BEGIN
+            INSERT INTO ventas (
+                id_funcion,
+                id_tipo_boleta,
+                cantidad,
+                canal,
+                estado
+            )
+            VALUES (
+                v_id_funcion,
+                v_id_tipo_boleta,
+                1,
+                'WEB',
+                'PAGADA'
+            );
+
+            RAISE NOTICE
+            'La venta fue aceptada; no se produjo el error esperado.';
+
+        EXCEPTION
+            WHEN OTHERS THEN
+                RAISE NOTICE 'CASO DE ERROR: %', SQLERRM;
+        END;
+    END IF;
+END;
+$$;
