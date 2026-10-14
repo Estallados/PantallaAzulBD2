@@ -202,3 +202,127 @@ CALL reporte_funcion(31);
 -- Se consulta una funcion que no existe
 
 CALL reporte_funcion(99999);
+
+-- PROCEDIMIENTO 3 - MANTENIMIENTO DE SALA
+-- Aqui se coloca una sala en mantenimiento
+-- y se cancelan las funciones programadas en esas fechas
+
+CREATE OR REPLACE PROCEDURE mantenimiento_sala(
+    p_id_sala INTEGER,
+    p_fecha_inicio DATE,
+    p_fecha_fin DATE
+)
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    v_estado VARCHAR(15);
+    v_canceladas INTEGER := 0;
+    v_pendientes INTEGER := 0;
+BEGIN
+
+    -- Se revisa que las fechas sean correctas
+    IF p_fecha_inicio IS NULL OR p_fecha_fin IS NULL THEN
+        RAISE EXCEPTION
+        'Debe indicar las dos fechas del mantenimiento';
+    END IF;
+
+    IF p_fecha_fin < p_fecha_inicio THEN
+        RAISE EXCEPTION
+        'La fecha final no puede ser anterior a la inicial';
+    END IF;
+
+    -- No se permite iniciar el mantenimiento en el pasado
+    IF p_fecha_inicio < CURRENT_DATE THEN
+        RAISE EXCEPTION
+        'La fecha de inicio no puede estar en el pasado';
+    END IF;
+
+    -- Aqui se busca la sala
+    SELECT estado
+    INTO v_estado
+    FROM salas
+    WHERE id_sala = p_id_sala
+    FOR UPDATE;
+
+    -- Se revisa que la sala exista
+    IF NOT FOUND THEN
+        RAISE EXCEPTION
+        'La sala % no existe',
+        p_id_sala;
+    END IF;
+
+    -- Se revisa si ya esta en mantenimiento
+    IF v_estado = 'MANTENIMIENTO' THEN
+        RAISE EXCEPTION
+        'La sala % ya esta en mantenimiento',
+        p_id_sala;
+    END IF;
+
+    -- Aqui se cancelan las funciones programadas
+    -- que se encuentren dentro de las fechas indicadas
+    UPDATE funciones
+    SET estado = 'CANCELADA'
+    WHERE id_sala = p_id_sala
+      AND estado = 'PROGRAMADA'
+      AND fecha_hora >= p_fecha_inicio
+      AND fecha_hora < (p_fecha_fin + INTERVAL '1 day');
+
+    -- Aqui se cuentan las funciones canceladas
+    GET DIAGNOSTICS v_canceladas = ROW_COUNT;
+
+    -- Se revisa que no queden funciones futuras programadas
+    SELECT COUNT(*)
+    INTO v_pendientes
+    FROM funciones
+    WHERE id_sala = p_id_sala
+      AND estado = 'PROGRAMADA'
+      AND fecha_hora >= CURRENT_TIMESTAMP;
+
+    IF v_pendientes > 0 THEN
+        RAISE EXCEPTION
+        'La sala todavia tiene % funcion(es) programada(s) fuera del mantenimiento',
+        v_pendientes;
+    END IF;
+
+    -- Aqui se coloca la sala en mantenimiento
+    UPDATE salas
+    SET estado = 'MANTENIMIENTO'
+    WHERE id_sala = p_id_sala;
+
+    RAISE NOTICE
+    'Sala % colocada en mantenimiento. Funciones canceladas: %',
+    p_id_sala,
+    v_canceladas;
+
+-- Aqui se manejan los errores
+EXCEPTION
+    WHEN OTHERS THEN
+        RAISE NOTICE
+        'Ocurrio un error en el mantenimiento: %',
+        SQLERRM;
+--    RAISE;
+-- Se comenta el RAISE para que al ejecutarse un error, no se detenga el programa.  
+END;
+$$;
+
+-- Prueba del caso exitoso
+-- Se utiliza una transaccion para dejar los datos como estaban
+
+BEGIN;
+
+CALL mantenimiento_sala(
+    4,
+    CURRENT_DATE,
+    CURRENT_DATE
+);
+
+ROLLBACK;
+
+-- Prueba del caso de error
+-- Se indica una fecha final anterior a la inicial
+
+CALL mantenimiento_sala(
+    4,
+    CURRENT_DATE + 5,
+    CURRENT_DATE + 2
+);
