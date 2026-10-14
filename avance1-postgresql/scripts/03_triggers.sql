@@ -274,3 +274,137 @@ BEGIN
     END IF;
 END;
 $$;
+
+-- TRIGGER 4
+-- Validar que no existan funciones cruzadas en la misma sala
+
+DROP TRIGGER IF EXISTS trg_validar_cruce_funciones ON funciones;
+
+CREATE OR REPLACE FUNCTION fn_validar_cruce_funciones()
+RETURNS TRIGGER AS $$
+DECLARE
+    v_duracion_nueva INT;
+    v_cruces INT;
+BEGIN
+    -- Obtener la duracion de la pelicula
+    SELECT duracion_min
+    INTO v_duracion_nueva
+    FROM contratos
+    WHERE id_contrato = NEW.id_contrato;
+
+    -- Verificar que el contrato exista
+    IF v_duracion_nueva IS NULL THEN
+        RAISE EXCEPTION
+        'No se encontro la duracion del contrato %',
+        NEW.id_contrato;
+    END IF;
+
+    -- Las funciones canceladas no ocupan la sala
+    IF NEW.estado <> 'CANCELADA' THEN
+
+        -- Revisar si existe otra funcion cruzada
+        SELECT COUNT(*)
+        INTO v_cruces
+        FROM funciones f
+        JOIN contratos c
+            ON c.id_contrato = f.id_contrato
+        WHERE f.id_sala = NEW.id_sala
+          AND f.id_funcion <> COALESCE(NEW.id_funcion, 0)
+          AND f.estado <> 'CANCELADA'
+          AND NEW.fecha_hora <
+              f.fecha_hora + (c.duracion_min * INTERVAL '1 minute')
+          AND NEW.fecha_hora +
+              (v_duracion_nueva * INTERVAL '1 minute')
+              > f.fecha_hora;
+
+        -- Impedir el cruce de horarios
+        IF v_cruces > 0 THEN
+            RAISE EXCEPTION
+            'La sala % ya tiene una funcion que se cruza con este horario',
+            NEW.id_sala;
+        END IF;
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+
+-- Crear el trigger
+
+CREATE TRIGGER trg_validar_cruce_funciones
+BEFORE INSERT OR UPDATE
+ON funciones
+FOR EACH ROW
+EXECUTE FUNCTION fn_validar_cruce_funciones();
+
+-- CASO DE EXITO
+-- Consultar las funciones registradas por sala
+
+SELECT
+    f.id_funcion,
+    f.id_sala,
+    f.id_contrato,
+    f.fecha_hora,
+    c.duracion_min,
+    f.fecha_hora +
+        (c.duracion_min * INTERVAL '1 minute') AS hora_final,
+    f.estado
+FROM funciones f
+JOIN contratos c
+    ON c.id_contrato = f.id_contrato
+WHERE f.estado <> 'CANCELADA'
+ORDER BY f.id_sala, f.fecha_hora;
+
+
+-- CASO DE ERROR
+-- Intentar crear una funcion en un horario que se cruza
+-- con otra funcion de la misma sala
+
+DO $$
+DECLARE
+    v_id_sala INT;
+    v_id_contrato INT;
+    v_fecha_hora TIMESTAMP;
+BEGIN
+    -- Buscar una sala con una funcion no cancelada
+    SELECT f.id_sala, f.fecha_hora
+    INTO v_id_sala, v_fecha_hora
+    FROM funciones f
+    WHERE f.estado <> 'CANCELADA'
+    LIMIT 1;
+
+    -- Buscar un contrato disponible
+    SELECT id_contrato
+    INTO v_id_contrato
+    FROM contratos
+    LIMIT 1;
+
+    IF v_id_sala IS NULL OR v_id_contrato IS NULL THEN
+        RAISE NOTICE
+        'No se pudo realizar la prueba: faltan funciones o contratos registrados.';
+    ELSE
+        BEGIN
+            INSERT INTO funciones (
+                id_sala,
+                id_contrato,
+                fecha_hora,
+                estado
+            )
+            VALUES (
+                v_id_sala,
+                v_id_contrato,
+                v_fecha_hora + INTERVAL '30 minutes',
+                'PROGRAMADA'
+            );
+
+            RAISE NOTICE
+            'La funcion fue registrada; no se produjo el error esperado.';
+
+        EXCEPTION
+            WHEN OTHERS THEN
+                RAISE NOTICE 'CASO DE ERROR: %', SQLERRM;
+        END;
+    END IF;
+END;
+$$;
