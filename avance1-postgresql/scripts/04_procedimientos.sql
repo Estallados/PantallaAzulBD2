@@ -102,3 +102,103 @@ CALL anular_venta(
     'Prueba de venta inexistente'
 );
 
+
+
+-- PROCEDIMIENTO 2 - REPORTE DE FUNCION
+-- Aqui se muestra cuantas boletas se vendieron
+-- cuanto dinero se recaudo y la ocupacion de la sala
+
+CREATE OR REPLACE PROCEDURE reporte_funcion(
+    p_id_funcion INTEGER
+)
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    v_capacidad INTEGER;
+    v_vendidas INTEGER := 0;
+    v_recaudo NUMERIC(14,2) := 0;
+    v_dato RECORD;
+BEGIN
+
+    -- Aqui se busca la capacidad de la sala
+    SELECT s.capacidad
+    INTO v_capacidad
+    FROM funciones f
+    JOIN salas s
+        ON s.id_sala = f.id_sala
+    WHERE f.id_funcion = p_id_funcion;
+
+    -- Se revisa que la funcion exista
+    IF NOT FOUND THEN
+        RAISE EXCEPTION
+        'La funcion % no existe',
+        p_id_funcion;
+    END IF;
+
+    -- Aqui se calculan las boletas vendidas
+    -- y el dinero recaudado
+    SELECT
+        COALESCE(SUM(cantidad), 0),
+        COALESCE(SUM(cantidad * valor_unitario), 0)
+    INTO
+        v_vendidas,
+        v_recaudo
+    FROM ventas
+    WHERE id_funcion = p_id_funcion
+      AND estado = 'PAGADA';
+
+    -- Se muestra la informacion general
+    RAISE NOTICE
+    'Funcion %: % de % sillas ocupadas',
+    p_id_funcion,
+    v_vendidas,
+    v_capacidad;
+
+    RAISE NOTICE
+    'Ocupacion: % por ciento',
+    ROUND(v_vendidas * 100.0 / v_capacidad, 1);
+
+    RAISE NOTICE
+    'Recaudo total: $%',
+    v_recaudo;
+
+    -- Aqui se muestra el recaudo por tipo de boleta
+    FOR v_dato IN
+        SELECT
+            tb.nombre,
+            SUM(v.cantidad) AS cantidad,
+            SUM(v.cantidad * v.valor_unitario) AS recaudo
+        FROM ventas v
+        JOIN tipos_boleta tb
+            ON tb.id_tipo_boleta = v.id_tipo_boleta
+        WHERE v.id_funcion = p_id_funcion
+          AND v.estado = 'PAGADA'
+        GROUP BY tb.nombre
+    LOOP
+        RAISE NOTICE
+        '%: % boletas | $%',
+        v_dato.nombre,
+        v_dato.cantidad,
+        v_dato.recaudo;
+    END LOOP;
+
+-- Aqui se manejan los errores
+EXCEPTION
+    WHEN OTHERS THEN
+        RAISE NOTICE
+        'Ocurrio un error al generar el reporte: %',
+        SQLERRM;
+--    RAISE;
+-- Se comenta el RAISE para que al ejecutarse un error, no se detenga el programa.   
+END;
+$$;
+
+-- Prueba del caso exitoso
+-- Se genera el reporte de una funcion existente
+
+CALL reporte_funcion(31);
+
+-- Prueba del caso de error
+-- Se consulta una funcion que no existe
+
+CALL reporte_funcion(99999);
