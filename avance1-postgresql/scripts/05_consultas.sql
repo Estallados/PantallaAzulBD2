@@ -89,3 +89,50 @@ GROUP BY
 
 ORDER BY
     porcentaje_ocupacion DESC;
+
+    -- Consulta 3
+-- Muestra los espectadores que gastaron mas que el promedio
+
+SELECT
+    e.id_espectador,
+    e.nombres,
+    e.apellidos,
+    COUNT(v.id_venta) AS ventas_realizadas,
+
+    -- Se calcula cuanto gasto cada espectador
+    SUM(v.cantidad * v.valor_unitario) AS total_gastado
+
+FROM espectadores e
+
+JOIN ventas v
+    ON v.id_espectador = e.id_espectador
+
+WHERE v.estado = 'PAGADA'
+
+GROUP BY
+    e.id_espectador,
+    e.nombres,
+    e.apellidos
+
+-- Se compara el gasto del espectador con el promedio general
+HAVING SUM(v.cantidad * v.valor_unitario) >
+(
+    SELECT AVG(total_cliente)
+
+    FROM
+    (
+        -- Aqui se calcula el gasto total de cada cliente
+        SELECT
+            SUM(cantidad * valor_unitario) AS total_cliente
+
+        FROM ventas
+
+        WHERE estado = 'PAGADA'
+
+        GROUP BY id_espectador
+
+    ) AS gastos
+)
+
+ORDER BY
+    total_gastado DESC;
