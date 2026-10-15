@@ -136,3 +136,50 @@ HAVING SUM(v.cantidad * v.valor_unitario) >
 
 ORDER BY
     total_gastado DESC;
+
+-- Consulta 4
+-- Hace un ranking de peliculas segun el recaudo
+
+SELECT
+
+    -- Aqui se asigna la posicion usando RANK
+    RANK() OVER (
+        ORDER BY recaudo_total DESC
+    ) AS posicion,
+
+    titulo_obra,
+    funciones_realizadas,
+    boletas_vendidas,
+    recaudo_total
+
+FROM
+(
+    SELECT
+        c.titulo_obra,
+
+        -- Se cuentan las funciones de cada pelicula
+        COUNT(DISTINCT f.id_funcion) AS funciones_realizadas,
+
+        -- Se suman las boletas vendidas
+        SUM(v.cantidad) AS boletas_vendidas,
+
+        -- Se calcula el recaudo total
+        SUM(v.cantidad * v.valor_unitario) AS recaudo_total
+
+    FROM contratos c
+
+    JOIN funciones f
+        ON f.id_contrato = c.id_contrato
+
+    JOIN ventas v
+        ON v.id_funcion = f.id_funcion
+
+    WHERE v.estado = 'PAGADA'
+
+    GROUP BY
+        c.titulo_obra
+
+) AS reporte
+
+ORDER BY
+    posicion;
