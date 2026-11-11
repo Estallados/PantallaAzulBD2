@@ -844,3 +844,1308 @@ db.fichas_tecnicas_peliculas.insertMany([
     evaluacion: { distribuidora: "Diamond Films", fecha_propuesta: ISODate("2026-11-12T00:00:00-05:00"), prioridad: "ALTA" }
   }
 ]);
+
+
+
+
+
+
+// 2. REQUISITOS_PROYECCION (36 documentos)
+// Un documento por cada una de las 36 funciones de PostgreSQL
+// Este se encarga de limpiar la colección para poder ejecutar el script varias veces
+db.requisitos_proyeccion.deleteMany({});   
+
+db.requisitos_proyeccion.insertMany([
+  {
+    id_funcion: 1,
+    id_sala: 1,
+    id_contrato: 1,
+    codigo_pelicula: "PA-PEL-001",
+    fecha_hora: ISODate("2026-10-05T14:00:00-05:00"),
+    formato: "2D",
+    idioma: "SUBTITULADA",
+    requisitos: {
+      proyeccion: { proyector: "Barco SP4K-15 (láser)", resolucion: "4K", relacion_aspecto: "1.85:1", brillo_min_fl: 14 },
+      audio: { sistema: "Dolby Digital 7.1", canales: 8, nivel_referencia_db: 82 },
+      subtitulado: {
+        idioma: "es-CO",
+        formato_archivo: "SMPTE-TT (XML)",
+        tamano_fuente_pt: 42,
+        posicion: "inferior",
+        sincronia_verificada: true
+      }
+    },
+    dcp: {
+      kdm_valida_desde: ISODate("2026-10-03T14:00:00-05:00"),
+      kdm_valida_hasta: ISODate("2026-10-06T14:00:00-05:00"),
+      tamano_gb: 145.2
+    },
+    checklist: [
+      { item: "Ingestar DCP y validar hash", id_staff: 8, completado: true, fecha: ISODate("2026-10-04T14:00:00-05:00") },
+      { item: "Verificar KDM vigente", id_staff: 8, completado: true, fecha: ISODate("2026-10-04T15:00:00-05:00") },
+      { item: "Prueba de imagen y foco", id_staff: 8, completado: true, fecha: ISODate("2026-10-04T16:00:00-05:00") },
+      { item: "Prueba de sonido en sala", id_staff: 8, completado: true, fecha: ISODate("2026-10-04T17:00:00-05:00") },
+      { item: "Verificar sincronía de subtítulos", id_staff: 8, completado: true, fecha: ISODate("2026-10-04T18:00:00-05:00") }
+    ],
+    estado_preparacion: "LISTA"
+  },
+  {
+    id_funcion: 2,
+    id_sala: 6,
+    id_contrato: 2,
+    codigo_pelicula: "PA-PEL-002",
+    fecha_hora: ISODate("2026-10-05T17:00:00-05:00"),
+    formato: "35MM",
+    idioma: "ORIGINAL",
+    requisitos: {
+      proyeccion: {
+        proyector: "Kinoton FP38 (35 mm) + respaldo digital",
+        resolucion: "Analógica 35 mm",
+        relacion_aspecto: "1.85:1",
+        brillo_min_fl: 14,
+        copia_fisica: { rollos: 6, estado_copia: "Restaurada", empalmes_verificados: true }
+      },
+      audio: { sistema: "Dolby Digital 5.1", canales: 6, nivel_referencia_db: 82 },
+      evento_especial: { tipo: "CINECLUB", foro_posterior_min: 30, moderador_id_staff: 12, microfonos_inalambricos: 2 }
+    },
+    dcp: {
+      kdm_valida_desde: ISODate("2026-10-03T17:00:00-05:00"),
+      kdm_valida_hasta: ISODate("2026-10-06T17:00:00-05:00"),
+      tamano_gb: 148.5
+    },
+    checklist: [
+      { item: "Ingestar DCP y validar hash", id_staff: 8, completado: true, fecha: ISODate("2026-10-04T17:00:00-05:00") },
+      { item: "Verificar KDM vigente", id_staff: 8, completado: true, fecha: ISODate("2026-10-04T18:00:00-05:00") },
+      { item: "Prueba de imagen y foco", id_staff: 8, completado: true, fecha: ISODate("2026-10-04T19:00:00-05:00") },
+      { item: "Prueba de sonido en sala", id_staff: 8, completado: true, fecha: ISODate("2026-10-04T20:00:00-05:00") },
+      {
+        item: "Revisar rollos y empalmes de la copia 35 mm",
+        id_staff: 8,
+        completado: true,
+        fecha: ISODate("2026-10-04T21:00:00-05:00")
+      },
+      { item: "Preparar micrófonos para foro", id_staff: 7, completado: true, fecha: ISODate("2026-10-04T22:00:00-05:00") }
+    ],
+    estado_preparacion: "LISTA"
+  },
+  {
+    id_funcion: 3,
+    id_sala: 5,
+    id_contrato: 3,
+    codigo_pelicula: "PA-PEL-003",
+    fecha_hora: ISODate("2026-10-05T20:00:00-05:00"),
+    formato: "DOLBY_ATMOS",
+    idioma: "ORIGINAL",
+    requisitos: {
+      proyeccion: {
+        proyector: "Christie CP4440-RGB (láser RGB)",
+        resolucion: "4K",
+        relacion_aspecto: "2.39:1",
+        brillo_min_fl: 14
+      },
+      audio: { sistema: "Dolby Atmos", canales: 64, nivel_referencia_db: 85 },
+      dolby_atmos: {
+        altavoces_techo: 24,
+        procesador: "Dolby CP950A",
+        archivo_audio: "IAB (Immersive Audio Bitstream)",
+        calibracion_previa: true
+      }
+    },
+    dcp: {
+      kdm_valida_desde: ISODate("2026-10-03T20:00:00-05:00"),
+      kdm_valida_hasta: ISODate("2026-10-06T20:00:00-05:00"),
+      tamano_gb: 129.8
+    },
+    checklist: [
+      { item: "Ingestar DCP y validar hash", id_staff: 9, completado: true, fecha: ISODate("2026-10-04T20:00:00-05:00") },
+      { item: "Verificar KDM vigente", id_staff: 9, completado: true, fecha: ISODate("2026-10-04T21:00:00-05:00") },
+      { item: "Prueba de imagen y foco", id_staff: 9, completado: true, fecha: ISODate("2026-10-04T22:00:00-05:00") },
+      { item: "Prueba de sonido en sala", id_staff: 9, completado: true, fecha: ISODate("2026-10-04T23:00:00-05:00") },
+      { item: "Calibrar altavoces de techo Atmos", id_staff: 9, completado: true, fecha: ISODate("2026-10-05T00:00:00-05:00") }
+    ],
+    estado_preparacion: "LISTA"
+  },
+  {
+    id_funcion: 4,
+    id_sala: 5,
+    id_contrato: 4,
+    codigo_pelicula: "PA-PEL-004",
+    fecha_hora: ISODate("2026-10-06T14:00:00-05:00"),
+    formato: "IMAX",
+    idioma: "ORIGINAL",
+    requisitos: {
+      proyeccion: { proyector: "IMAX con láser 4K dual", resolucion: "4K", relacion_aspecto: "1.43:1", brillo_min_fl: 22 },
+      audio: { sistema: "IMAX 12 canales", canales: 12, nivel_referencia_db: 85 },
+      imax: { certificacion_vigente: true, version_dcp: "IMAX DMR", alineacion_dual_laser: true, butacas_reclinables: 70 },
+      evento_especial: {
+        tipo: "CONVERSATORIO_CON_ARTISTA",
+        invitado_id_artista: 4,
+        foro_posterior_min: 45,
+        moderador_id_staff: 12,
+        microfonos_inalambricos: 3,
+        requiere_seguridad_adicional: true
+      }
+    },
+    dcp: {
+      kdm_valida_desde: ISODate("2026-10-04T14:00:00-05:00"),
+      kdm_valida_hasta: ISODate("2026-10-07T14:00:00-05:00"),
+      tamano_gb: 323.4
+    },
+    checklist: [
+      { item: "Ingestar DCP y validar hash", id_staff: 9, completado: true, fecha: ISODate("2026-10-05T14:00:00-05:00") },
+      { item: "Verificar KDM vigente", id_staff: 9, completado: true, fecha: ISODate("2026-10-05T15:00:00-05:00") },
+      { item: "Prueba de imagen y foco", id_staff: 9, completado: true, fecha: ISODate("2026-10-05T16:00:00-05:00") },
+      { item: "Prueba de sonido en sala", id_staff: 9, completado: true, fecha: ISODate("2026-10-05T17:00:00-05:00") },
+      { item: "Alinear proyectores láser duales", id_staff: 9, completado: true, fecha: ISODate("2026-10-05T18:00:00-05:00") },
+      {
+        item: "Coordinar llegada del artista invitado",
+        id_staff: 12,
+        completado: true,
+        fecha: ISODate("2026-10-05T19:00:00-05:00")
+      }
+    ],
+    estado_preparacion: "LISTA"
+  },
+  {
+    id_funcion: 5,
+    id_sala: 4,
+    id_contrato: 5,
+    codigo_pelicula: "PA-PEL-005",
+    fecha_hora: ISODate("2026-10-06T17:00:00-05:00"),
+    formato: "3D",
+    idioma: "ORIGINAL",
+    requisitos: {
+      proyeccion: {
+        proyector: "Christie CP4440-RGB (láser RGB)",
+        resolucion: "4K",
+        relacion_aspecto: "1.85:1",
+        brillo_min_fl: 6
+      },
+      audio: { sistema: "Dolby Digital 7.1", canales: 8, nivel_referencia_db: 82 },
+      gafas_3d: { tipo: "RealD pasivas", cantidad: 135, desinfeccion: "UV + paño microfibra", polarizador: "RealD XL" }
+    },
+    dcp: {
+      kdm_valida_desde: ISODate("2026-10-04T17:00:00-05:00"),
+      kdm_valida_hasta: ISODate("2026-10-07T17:00:00-05:00"),
+      tamano_gb: 200
+    },
+    checklist: [
+      { item: "Ingestar DCP y validar hash", id_staff: 9, completado: true, fecha: ISODate("2026-10-05T17:00:00-05:00") },
+      { item: "Verificar KDM vigente", id_staff: 9, completado: true, fecha: ISODate("2026-10-05T18:00:00-05:00") },
+      { item: "Prueba de imagen y foco", id_staff: 9, completado: true, fecha: ISODate("2026-10-05T19:00:00-05:00") },
+      { item: "Prueba de sonido en sala", id_staff: 9, completado: true, fecha: ISODate("2026-10-05T20:00:00-05:00") },
+      { item: "Desinfectar y contar gafas 3D", id_staff: 6, completado: true, fecha: ISODate("2026-10-05T21:00:00-05:00") },
+      { item: "Calibrar polarizador 3D", id_staff: 9, completado: true, fecha: ISODate("2026-10-05T22:00:00-05:00") }
+    ],
+    estado_preparacion: "LISTA"
+  },
+  {
+    id_funcion: 6,
+    id_sala: 3,
+    id_contrato: 6,
+    codigo_pelicula: "PA-PEL-006",
+    fecha_hora: ISODate("2026-10-06T20:00:00-05:00"),
+    formato: "3D",
+    idioma: "ORIGINAL",
+    requisitos: {
+      proyeccion: {
+        proyector: "Christie CP4440-RGB (láser RGB)",
+        resolucion: "4K",
+        relacion_aspecto: "2.39:1",
+        brillo_min_fl: 6
+      },
+      audio: { sistema: "Dolby Digital 7.1", canales: 8, nivel_referencia_db: 82 },
+      gafas_3d: { tipo: "RealD pasivas", cantidad: 155, desinfeccion: "UV + paño microfibra", polarizador: "RealD XL" }
+    },
+    dcp: {
+      kdm_valida_desde: ISODate("2026-10-04T20:00:00-05:00"),
+      kdm_valida_hasta: ISODate("2026-10-07T20:00:00-05:00"),
+      tamano_gb: 164.8
+    },
+    checklist: [
+      { item: "Ingestar DCP y validar hash", id_staff: 9, completado: true, fecha: ISODate("2026-10-05T20:00:00-05:00") },
+      { item: "Verificar KDM vigente", id_staff: 9, completado: true, fecha: ISODate("2026-10-05T21:00:00-05:00") },
+      { item: "Prueba de imagen y foco", id_staff: 9, completado: true, fecha: ISODate("2026-10-05T22:00:00-05:00") },
+      { item: "Prueba de sonido en sala", id_staff: 9, completado: true, fecha: ISODate("2026-10-05T23:00:00-05:00") },
+      { item: "Desinfectar y contar gafas 3D", id_staff: 6, completado: true, fecha: ISODate("2026-10-06T00:00:00-05:00") },
+      { item: "Calibrar polarizador 3D", id_staff: 9, completado: true, fecha: ISODate("2026-10-06T01:00:00-05:00") }
+    ],
+    estado_preparacion: "LISTA"
+  },
+  {
+    id_funcion: 7,
+    id_sala: 3,
+    id_contrato: 7,
+    codigo_pelicula: "PA-PEL-007",
+    fecha_hora: ISODate("2026-10-07T14:00:00-05:00"),
+    formato: "3D",
+    idioma: "ORIGINAL",
+    requisitos: {
+      proyeccion: {
+        proyector: "Christie CP4440-RGB (láser RGB)",
+        resolucion: "4K",
+        relacion_aspecto: "1.85:1",
+        brillo_min_fl: 6
+      },
+      audio: { sistema: "Dolby Digital 7.1", canales: 8, nivel_referencia_db: 82 },
+      gafas_3d: { tipo: "RealD pasivas", cantidad: 155, desinfeccion: "UV + paño microfibra", polarizador: "RealD XL" }
+    },
+    dcp: {
+      kdm_valida_desde: ISODate("2026-10-05T14:00:00-05:00"),
+      kdm_valida_hasta: ISODate("2026-10-08T14:00:00-05:00"),
+      tamano_gb: 161.6
+    },
+    checklist: [
+      { item: "Ingestar DCP y validar hash", id_staff: 9, completado: true, fecha: ISODate("2026-10-06T14:00:00-05:00") },
+      { item: "Verificar KDM vigente", id_staff: 9, completado: true, fecha: ISODate("2026-10-06T15:00:00-05:00") },
+      { item: "Prueba de imagen y foco", id_staff: 9, completado: true, fecha: ISODate("2026-10-06T16:00:00-05:00") },
+      { item: "Prueba de sonido en sala", id_staff: 9, completado: true, fecha: ISODate("2026-10-06T17:00:00-05:00") },
+      { item: "Desinfectar y contar gafas 3D", id_staff: 6, completado: true, fecha: ISODate("2026-10-06T18:00:00-05:00") },
+      { item: "Calibrar polarizador 3D", id_staff: 9, completado: true, fecha: ISODate("2026-10-06T19:00:00-05:00") }
+    ],
+    estado_preparacion: "LISTA"
+  },
+  {
+    id_funcion: 8,
+    id_sala: 2,
+    id_contrato: 8,
+    codigo_pelicula: "PA-PEL-008",
+    fecha_hora: ISODate("2026-10-07T17:00:00-05:00"),
+    formato: "2D",
+    idioma: "ORIGINAL",
+    requisitos: {
+      proyeccion: { proyector: "Barco SP4K-15 (láser)", resolucion: "4K", relacion_aspecto: "1.85:1", brillo_min_fl: 14 },
+      audio: { sistema: "Dolby Digital 5.1", canales: 6, nivel_referencia_db: 82 },
+      evento_especial: {
+        tipo: "CONVERSATORIO_CON_ARTISTA",
+        invitado_id_artista: 8,
+        foro_posterior_min: 45,
+        moderador_id_staff: 12,
+        microfonos_inalambricos: 3,
+        requiere_seguridad_adicional: true
+      }
+    },
+    dcp: {
+      kdm_valida_desde: ISODate("2026-10-05T17:00:00-05:00"),
+      kdm_valida_hasta: ISODate("2026-10-08T17:00:00-05:00"),
+      tamano_gb: 141.9
+    },
+    checklist: [
+      { item: "Ingestar DCP y validar hash", id_staff: 8, completado: true, fecha: ISODate("2026-10-06T17:00:00-05:00") },
+      { item: "Verificar KDM vigente", id_staff: 8, completado: true, fecha: ISODate("2026-10-06T18:00:00-05:00") },
+      { item: "Prueba de imagen y foco", id_staff: 8, completado: true, fecha: ISODate("2026-10-06T19:00:00-05:00") },
+      { item: "Prueba de sonido en sala", id_staff: 8, completado: true, fecha: ISODate("2026-10-06T20:00:00-05:00") },
+      {
+        item: "Coordinar llegada del artista invitado",
+        id_staff: 12,
+        completado: true,
+        fecha: ISODate("2026-10-06T21:00:00-05:00")
+      }
+    ],
+    estado_preparacion: "LISTA"
+  },
+  {
+    id_funcion: 9,
+    id_sala: 1,
+    id_contrato: 9,
+    codigo_pelicula: "PA-PEL-009",
+    fecha_hora: ISODate("2026-10-07T20:00:00-05:00"),
+    formato: "2D",
+    idioma: "ORIGINAL",
+    requisitos: {
+      proyeccion: { proyector: "Barco SP4K-15 (láser)", resolucion: "4K", relacion_aspecto: "2.39:1", brillo_min_fl: 14 },
+      audio: { sistema: "Dolby Digital 7.1", canales: 8, nivel_referencia_db: 82 }
+    },
+    dcp: {
+      kdm_valida_desde: ISODate("2026-10-05T20:00:00-05:00"),
+      kdm_valida_hasta: ISODate("2026-10-08T20:00:00-05:00"),
+      tamano_gb: 114.4
+    },
+    checklist: [
+      { item: "Ingestar DCP y validar hash", id_staff: 8, completado: true, fecha: ISODate("2026-10-06T20:00:00-05:00") },
+      { item: "Verificar KDM vigente", id_staff: 8, completado: true, fecha: ISODate("2026-10-06T21:00:00-05:00") },
+      { item: "Prueba de imagen y foco", id_staff: 8, completado: true, fecha: ISODate("2026-10-06T22:00:00-05:00") },
+      { item: "Prueba de sonido en sala", id_staff: 8, completado: true, fecha: ISODate("2026-10-06T23:00:00-05:00") }
+    ],
+    estado_preparacion: "LISTA"
+  },
+  {
+    id_funcion: 10,
+    id_sala: 1,
+    id_contrato: 10,
+    codigo_pelicula: "PA-PEL-010",
+    fecha_hora: ISODate("2026-10-08T14:00:00-05:00"),
+    formato: "2D",
+    idioma: "SUBTITULADA",
+    requisitos: {
+      proyeccion: { proyector: "Barco SP4K-15 (láser)", resolucion: "4K", relacion_aspecto: "1.85:1", brillo_min_fl: 14 },
+      audio: { sistema: "Dolby Digital 7.1", canales: 8, nivel_referencia_db: 82 },
+      subtitulado: {
+        idioma: "es-CO",
+        formato_archivo: "SMPTE-TT (XML)",
+        tamano_fuente_pt: 42,
+        posicion: "inferior",
+        sincronia_verificada: true
+      }
+    },
+    dcp: {
+      kdm_valida_desde: ISODate("2026-10-06T14:00:00-05:00"),
+      kdm_valida_hasta: ISODate("2026-10-09T14:00:00-05:00"),
+      tamano_gb: 143
+    },
+    checklist: [
+      { item: "Ingestar DCP y validar hash", id_staff: 8, completado: true, fecha: ISODate("2026-10-07T14:00:00-05:00") },
+      { item: "Verificar KDM vigente", id_staff: 8, completado: true, fecha: ISODate("2026-10-07T15:00:00-05:00") },
+      { item: "Prueba de imagen y foco", id_staff: 8, completado: true, fecha: ISODate("2026-10-07T16:00:00-05:00") },
+      { item: "Prueba de sonido en sala", id_staff: 8, completado: true, fecha: ISODate("2026-10-07T17:00:00-05:00") },
+      { item: "Verificar sincronía de subtítulos", id_staff: 8, completado: true, fecha: ISODate("2026-10-07T18:00:00-05:00") }
+    ],
+    estado_preparacion: "LISTA"
+  },
+  {
+    id_funcion: 11,
+    id_sala: 6,
+    id_contrato: 11,
+    codigo_pelicula: "PA-PEL-011",
+    fecha_hora: ISODate("2026-10-08T17:00:00-05:00"),
+    formato: "2D",
+    idioma: "SUBTITULADA",
+    requisitos: {
+      proyeccion: { proyector: "Barco SP4K-15 (láser)", resolucion: "4K", relacion_aspecto: "1.85:1", brillo_min_fl: 14 },
+      audio: { sistema: "Dolby Digital 5.1", canales: 6, nivel_referencia_db: 82 },
+      subtitulado: {
+        idioma: "es-CO",
+        formato_archivo: "SMPTE-TT (XML)",
+        tamano_fuente_pt: 42,
+        posicion: "inferior",
+        sincronia_verificada: true
+      },
+      evento_especial: { tipo: "CINECLUB", foro_posterior_min: 30, moderador_id_staff: 12, microfonos_inalambricos: 2 }
+    },
+    dcp: {
+      kdm_valida_desde: ISODate("2026-10-06T17:00:00-05:00"),
+      kdm_valida_hasta: ISODate("2026-10-09T17:00:00-05:00"),
+      tamano_gb: 121
+    },
+    checklist: [
+      { item: "Ingestar DCP y validar hash", id_staff: 8, completado: true, fecha: ISODate("2026-10-07T17:00:00-05:00") },
+      { item: "Verificar KDM vigente", id_staff: 8, completado: true, fecha: ISODate("2026-10-07T18:00:00-05:00") },
+      { item: "Prueba de imagen y foco", id_staff: 8, completado: true, fecha: ISODate("2026-10-07T19:00:00-05:00") },
+      { item: "Prueba de sonido en sala", id_staff: 8, completado: true, fecha: ISODate("2026-10-07T20:00:00-05:00") },
+      { item: "Verificar sincronía de subtítulos", id_staff: 8, completado: true, fecha: ISODate("2026-10-07T21:00:00-05:00") },
+      { item: "Preparar micrófonos para foro", id_staff: 7, completado: true, fecha: ISODate("2026-10-07T22:00:00-05:00") }
+    ],
+    estado_preparacion: "LISTA"
+  },
+  {
+    id_funcion: 12,
+    id_sala: 5,
+    id_contrato: 12,
+    codigo_pelicula: "PA-PEL-012",
+    fecha_hora: ISODate("2026-10-08T20:00:00-05:00"),
+    formato: "DOLBY_ATMOS",
+    idioma: "SUBTITULADA",
+    requisitos: {
+      proyeccion: {
+        proyector: "Christie CP4440-RGB (láser RGB)",
+        resolucion: "4K",
+        relacion_aspecto: "2.39:1",
+        brillo_min_fl: 14
+      },
+      audio: { sistema: "Dolby Atmos", canales: 64, nivel_referencia_db: 85 },
+      dolby_atmos: {
+        altavoces_techo: 24,
+        procesador: "Dolby CP950A",
+        archivo_audio: "IAB (Immersive Audio Bitstream)",
+        calibracion_previa: true
+      },
+      subtitulado: {
+        idioma: "es-CO",
+        formato_archivo: "SMPTE-TT (XML)",
+        tamano_fuente_pt: 42,
+        posicion: "inferior",
+        sincronia_verificada: true
+      },
+      evento_especial: {
+        tipo: "CONVERSATORIO_CON_ARTISTA",
+        invitado_id_artista: 12,
+        foro_posterior_min: 45,
+        moderador_id_staff: 12,
+        microfonos_inalambricos: 3,
+        requiere_seguridad_adicional: true
+      }
+    },
+    dcp: {
+      kdm_valida_desde: ISODate("2026-10-06T20:00:00-05:00"),
+      kdm_valida_hasta: ISODate("2026-10-09T20:00:00-05:00"),
+      tamano_gb: 114.4
+    },
+    checklist: [
+      { item: "Ingestar DCP y validar hash", id_staff: 9, completado: true, fecha: ISODate("2026-10-07T20:00:00-05:00") },
+      { item: "Verificar KDM vigente", id_staff: 9, completado: true, fecha: ISODate("2026-10-07T21:00:00-05:00") },
+      { item: "Prueba de imagen y foco", id_staff: 9, completado: true, fecha: ISODate("2026-10-07T22:00:00-05:00") },
+      { item: "Prueba de sonido en sala", id_staff: 9, completado: true, fecha: ISODate("2026-10-07T23:00:00-05:00") },
+      { item: "Calibrar altavoces de techo Atmos", id_staff: 9, completado: true, fecha: ISODate("2026-10-08T00:00:00-05:00") },
+      { item: "Verificar sincronía de subtítulos", id_staff: 9, completado: true, fecha: ISODate("2026-10-08T01:00:00-05:00") },
+      {
+        item: "Coordinar llegada del artista invitado",
+        id_staff: 12,
+        completado: true,
+        fecha: ISODate("2026-10-08T02:00:00-05:00")
+      }
+    ],
+    estado_preparacion: "LISTA"
+  },
+  {
+    id_funcion: 13,
+    id_sala: 5,
+    id_contrato: 1,
+    codigo_pelicula: "PA-PEL-001",
+    fecha_hora: ISODate("2026-10-09T14:00:00-05:00"),
+    formato: "DOLBY_ATMOS",
+    idioma: "SUBTITULADA",
+    requisitos: {
+      proyeccion: {
+        proyector: "Christie CP4440-RGB (láser RGB)",
+        resolucion: "4K",
+        relacion_aspecto: "1.85:1",
+        brillo_min_fl: 14
+      },
+      audio: { sistema: "Dolby Atmos", canales: 64, nivel_referencia_db: 85 },
+      dolby_atmos: {
+        altavoces_techo: 24,
+        procesador: "Dolby CP950A",
+        archivo_audio: "IAB (Immersive Audio Bitstream)",
+        calibracion_previa: true
+      },
+      subtitulado: {
+        idioma: "es-CO",
+        formato_archivo: "SMPTE-TT (XML)",
+        tamano_fuente_pt: 42,
+        posicion: "inferior",
+        sincronia_verificada: true
+      }
+    },
+    dcp: {
+      kdm_valida_desde: ISODate("2026-10-07T14:00:00-05:00"),
+      kdm_valida_hasta: ISODate("2026-10-10T14:00:00-05:00"),
+      tamano_gb: 145.2
+    },
+    checklist: [
+      { item: "Ingestar DCP y validar hash", id_staff: 9, completado: true, fecha: ISODate("2026-10-08T14:00:00-05:00") },
+      { item: "Verificar KDM vigente", id_staff: 9, completado: true, fecha: ISODate("2026-10-08T15:00:00-05:00") },
+      { item: "Prueba de imagen y foco", id_staff: 9, completado: true, fecha: ISODate("2026-10-08T16:00:00-05:00") },
+      { item: "Prueba de sonido en sala", id_staff: 9, completado: true, fecha: ISODate("2026-10-08T17:00:00-05:00") },
+      { item: "Calibrar altavoces de techo Atmos", id_staff: 9, completado: true, fecha: ISODate("2026-10-08T18:00:00-05:00") },
+      { item: "Verificar sincronía de subtítulos", id_staff: 9, completado: true, fecha: ISODate("2026-10-08T19:00:00-05:00") }
+    ],
+    estado_preparacion: "LISTA"
+  },
+  {
+    id_funcion: 14,
+    id_sala: 4,
+    id_contrato: 2,
+    codigo_pelicula: "PA-PEL-002",
+    fecha_hora: ISODate("2026-10-09T17:00:00-05:00"),
+    formato: "2D",
+    idioma: "ORIGINAL",
+    requisitos: {
+      proyeccion: {
+        proyector: "Christie CP4440-RGB (láser RGB)",
+        resolucion: "4K",
+        relacion_aspecto: "1.85:1",
+        brillo_min_fl: 14
+      },
+      audio: { sistema: "Dolby Digital 7.1", canales: 8, nivel_referencia_db: 82 }
+    },
+    dcp: {
+      kdm_valida_desde: ISODate("2026-10-07T17:00:00-05:00"),
+      kdm_valida_hasta: ISODate("2026-10-10T17:00:00-05:00"),
+      tamano_gb: 148.5
+    },
+    checklist: [
+      { item: "Ingestar DCP y validar hash", id_staff: 9, completado: true, fecha: ISODate("2026-10-08T17:00:00-05:00") },
+      { item: "Verificar KDM vigente", id_staff: 9, completado: true, fecha: ISODate("2026-10-08T18:00:00-05:00") },
+      { item: "Prueba de imagen y foco", id_staff: 9, completado: true, fecha: ISODate("2026-10-08T19:00:00-05:00") },
+      { item: "Prueba de sonido en sala", id_staff: 9, completado: true, fecha: ISODate("2026-10-08T20:00:00-05:00") }
+    ],
+    estado_preparacion: "LISTA"
+  },
+  {
+    id_funcion: 15,
+    id_sala: 3,
+    id_contrato: 3,
+    codigo_pelicula: "PA-PEL-003",
+    fecha_hora: ISODate("2026-10-09T20:00:00-05:00"),
+    formato: "3D",
+    idioma: "ORIGINAL",
+    requisitos: {
+      proyeccion: {
+        proyector: "Christie CP4440-RGB (láser RGB)",
+        resolucion: "4K",
+        relacion_aspecto: "2.39:1",
+        brillo_min_fl: 6
+      },
+      audio: { sistema: "Dolby Digital 7.1", canales: 8, nivel_referencia_db: 82 },
+      gafas_3d: { tipo: "RealD pasivas", cantidad: 155, desinfeccion: "UV + paño microfibra", polarizador: "RealD XL" }
+    },
+    dcp: {
+      kdm_valida_desde: ISODate("2026-10-07T20:00:00-05:00"),
+      kdm_valida_hasta: ISODate("2026-10-10T20:00:00-05:00"),
+      tamano_gb: 188.8
+    },
+    checklist: [
+      { item: "Ingestar DCP y validar hash", id_staff: 9, completado: true, fecha: ISODate("2026-10-08T20:00:00-05:00") },
+      { item: "Verificar KDM vigente", id_staff: 9, completado: true, fecha: ISODate("2026-10-08T21:00:00-05:00") },
+      { item: "Prueba de imagen y foco", id_staff: 9, completado: true, fecha: ISODate("2026-10-08T22:00:00-05:00") },
+      { item: "Prueba de sonido en sala", id_staff: 9, completado: true, fecha: ISODate("2026-10-08T23:00:00-05:00") },
+      { item: "Desinfectar y contar gafas 3D", id_staff: 6, completado: true, fecha: ISODate("2026-10-09T00:00:00-05:00") },
+      { item: "Calibrar polarizador 3D", id_staff: 9, completado: true, fecha: ISODate("2026-10-09T01:00:00-05:00") }
+    ],
+    estado_preparacion: "LISTA"
+  },
+  {
+    id_funcion: 16,
+    id_sala: 3,
+    id_contrato: 4,
+    codigo_pelicula: "PA-PEL-004",
+    fecha_hora: ISODate("2026-10-10T14:00:00-05:00"),
+    formato: "3D",
+    idioma: "ORIGINAL",
+    requisitos: {
+      proyeccion: {
+        proyector: "Christie CP4440-RGB (láser RGB)",
+        resolucion: "4K",
+        relacion_aspecto: "1.85:1",
+        brillo_min_fl: 6
+      },
+      audio: { sistema: "Dolby Digital 7.1", canales: 8, nivel_referencia_db: 82 },
+      gafas_3d: { tipo: "RealD pasivas", cantidad: 155, desinfeccion: "UV + paño microfibra", polarizador: "RealD XL" },
+      evento_especial: {
+        tipo: "CONVERSATORIO_CON_ARTISTA",
+        invitado_id_artista: 4,
+        foro_posterior_min: 45,
+        moderador_id_staff: 12,
+        microfonos_inalambricos: 3,
+        requiere_seguridad_adicional: true
+      }
+    },
+    dcp: {
+      kdm_valida_desde: ISODate("2026-10-08T14:00:00-05:00"),
+      kdm_valida_hasta: ISODate("2026-10-11T14:00:00-05:00"),
+      tamano_gb: 246.4
+    },
+    checklist: [
+      { item: "Ingestar DCP y validar hash", id_staff: 9, completado: true, fecha: ISODate("2026-10-09T14:00:00-05:00") },
+      { item: "Verificar KDM vigente", id_staff: 9, completado: true, fecha: ISODate("2026-10-09T15:00:00-05:00") },
+      { item: "Prueba de imagen y foco", id_staff: 9, completado: true, fecha: ISODate("2026-10-09T16:00:00-05:00") },
+      { item: "Prueba de sonido en sala", id_staff: 9, completado: true, fecha: ISODate("2026-10-09T17:00:00-05:00") },
+      { item: "Desinfectar y contar gafas 3D", id_staff: 6, completado: true, fecha: ISODate("2026-10-09T18:00:00-05:00") },
+      { item: "Calibrar polarizador 3D", id_staff: 9, completado: true, fecha: ISODate("2026-10-09T19:00:00-05:00") },
+      {
+        item: "Coordinar llegada del artista invitado",
+        id_staff: 12,
+        completado: true,
+        fecha: ISODate("2026-10-09T20:00:00-05:00")
+      }
+    ],
+    estado_preparacion: "LISTA"
+  },
+  {
+    id_funcion: 17,
+    id_sala: 2,
+    id_contrato: 5,
+    codigo_pelicula: "PA-PEL-005",
+    fecha_hora: ISODate("2026-10-10T17:00:00-05:00"),
+    formato: "2D",
+    idioma: "ORIGINAL",
+    requisitos: {
+      proyeccion: { proyector: "Barco SP4K-15 (láser)", resolucion: "4K", relacion_aspecto: "1.85:1", brillo_min_fl: 14 },
+      audio: { sistema: "Dolby Digital 5.1", canales: 6, nivel_referencia_db: 82 }
+    },
+    dcp: {
+      kdm_valida_desde: ISODate("2026-10-08T17:00:00-05:00"),
+      kdm_valida_hasta: ISODate("2026-10-11T17:00:00-05:00"),
+      tamano_gb: 137.5
+    },
+    checklist: [
+      { item: "Ingestar DCP y validar hash", id_staff: 8, completado: true, fecha: ISODate("2026-10-09T17:00:00-05:00") },
+      { item: "Verificar KDM vigente", id_staff: 8, completado: true, fecha: ISODate("2026-10-09T18:00:00-05:00") },
+      { item: "Prueba de imagen y foco", id_staff: 8, completado: true, fecha: ISODate("2026-10-09T19:00:00-05:00") },
+      { item: "Prueba de sonido en sala", id_staff: 8, completado: true, fecha: ISODate("2026-10-09T20:00:00-05:00") }
+    ],
+    estado_preparacion: "LISTA"
+  },
+  {
+    id_funcion: 18,
+    id_sala: 1,
+    id_contrato: 6,
+    codigo_pelicula: "PA-PEL-006",
+    fecha_hora: ISODate("2026-10-10T20:00:00-05:00"),
+    formato: "2D",
+    idioma: "ORIGINAL",
+    requisitos: {
+      proyeccion: { proyector: "Barco SP4K-15 (láser)", resolucion: "4K", relacion_aspecto: "2.39:1", brillo_min_fl: 14 },
+      audio: { sistema: "Dolby Digital 7.1", canales: 8, nivel_referencia_db: 82 }
+    },
+    dcp: {
+      kdm_valida_desde: ISODate("2026-10-08T20:00:00-05:00"),
+      kdm_valida_hasta: ISODate("2026-10-11T20:00:00-05:00"),
+      tamano_gb: 113.3
+    },
+    checklist: [
+      { item: "Ingestar DCP y validar hash", id_staff: 8, completado: true, fecha: ISODate("2026-10-09T20:00:00-05:00") },
+      { item: "Verificar KDM vigente", id_staff: 8, completado: true, fecha: ISODate("2026-10-09T21:00:00-05:00") },
+      { item: "Prueba de imagen y foco", id_staff: 8, completado: true, fecha: ISODate("2026-10-09T22:00:00-05:00") },
+      { item: "Prueba de sonido en sala", id_staff: 8, completado: true, fecha: ISODate("2026-10-09T23:00:00-05:00") }
+    ],
+    estado_preparacion: "LISTA"
+  },
+  {
+    id_funcion: 19,
+    id_sala: 1,
+    id_contrato: 7,
+    codigo_pelicula: "PA-PEL-007",
+    fecha_hora: ISODate("2026-10-11T14:00:00-05:00"),
+    formato: "2D",
+    idioma: "ORIGINAL",
+    requisitos: {
+      proyeccion: { proyector: "Barco SP4K-15 (láser)", resolucion: "4K", relacion_aspecto: "1.85:1", brillo_min_fl: 14 },
+      audio: { sistema: "Dolby Digital 7.1", canales: 8, nivel_referencia_db: 82 }
+    },
+    dcp: {
+      kdm_valida_desde: ISODate("2026-10-09T14:00:00-05:00"),
+      kdm_valida_hasta: ISODate("2026-10-12T14:00:00-05:00"),
+      tamano_gb: 111.1
+    },
+    checklist: [
+      { item: "Ingestar DCP y validar hash", id_staff: 8, completado: true, fecha: ISODate("2026-10-10T14:00:00-05:00") },
+      { item: "Verificar KDM vigente", id_staff: 8, completado: false, fecha: null },
+      { item: "Prueba de imagen y foco", id_staff: 8, completado: true, fecha: ISODate("2026-10-10T16:00:00-05:00") },
+      { item: "Prueba de sonido en sala", id_staff: 8, completado: true, fecha: ISODate("2026-10-10T17:00:00-05:00") }
+    ],
+    estado_preparacion: "PENDIENTE"
+  },
+  {
+    id_funcion: 20,
+    id_sala: 6,
+    id_contrato: 8,
+    codigo_pelicula: "PA-PEL-008",
+    fecha_hora: ISODate("2026-10-11T17:00:00-05:00"),
+    formato: "2D",
+    idioma: "ORIGINAL",
+    requisitos: {
+      proyeccion: { proyector: "Barco SP4K-15 (láser)", resolucion: "4K", relacion_aspecto: "1.85:1", brillo_min_fl: 14 },
+      audio: { sistema: "Dolby Digital 5.1", canales: 6, nivel_referencia_db: 82 },
+      evento_especial: {
+        tipo: "CONVERSATORIO_CON_ARTISTA",
+        invitado_id_artista: 8,
+        foro_posterior_min: 45,
+        moderador_id_staff: 12,
+        microfonos_inalambricos: 3,
+        requiere_seguridad_adicional: true
+      }
+    },
+    dcp: {
+      kdm_valida_desde: ISODate("2026-10-09T17:00:00-05:00"),
+      kdm_valida_hasta: ISODate("2026-10-12T17:00:00-05:00"),
+      tamano_gb: 141.9
+    },
+    checklist: [
+      { item: "Ingestar DCP y validar hash", id_staff: 8, completado: false, fecha: null },
+      { item: "Verificar KDM vigente", id_staff: 8, completado: true, fecha: ISODate("2026-10-10T18:00:00-05:00") },
+      { item: "Prueba de imagen y foco", id_staff: 8, completado: true, fecha: ISODate("2026-10-10T19:00:00-05:00") },
+      { item: "Prueba de sonido en sala", id_staff: 8, completado: true, fecha: ISODate("2026-10-10T20:00:00-05:00") },
+      { item: "Preparar micrófonos para foro", id_staff: 7, completado: false, fecha: null },
+      {
+        item: "Coordinar llegada del artista invitado",
+        id_staff: 12,
+        completado: true,
+        fecha: ISODate("2026-10-10T22:00:00-05:00")
+      }
+    ],
+    estado_preparacion: "PENDIENTE"
+  },
+  {
+    id_funcion: 21,
+    id_sala: 5,
+    id_contrato: 9,
+    codigo_pelicula: "PA-PEL-009",
+    fecha_hora: ISODate("2026-10-11T20:00:00-05:00"),
+    formato: "DOLBY_ATMOS",
+    idioma: "ORIGINAL",
+    requisitos: {
+      proyeccion: {
+        proyector: "Christie CP4440-RGB (láser RGB)",
+        resolucion: "4K",
+        relacion_aspecto: "2.39:1",
+        brillo_min_fl: 14
+      },
+      audio: { sistema: "Dolby Atmos", canales: 64, nivel_referencia_db: 85 },
+      dolby_atmos: {
+        altavoces_techo: 24,
+        procesador: "Dolby CP950A",
+        archivo_audio: "IAB (Immersive Audio Bitstream)",
+        calibracion_previa: true
+      }
+    },
+    dcp: {
+      kdm_valida_desde: ISODate("2026-10-09T20:00:00-05:00"),
+      kdm_valida_hasta: ISODate("2026-10-12T20:00:00-05:00"),
+      tamano_gb: 114.4
+    },
+    checklist: [
+      { item: "Ingestar DCP y validar hash", id_staff: 9, completado: true, fecha: ISODate("2026-10-10T20:00:00-05:00") },
+      { item: "Verificar KDM vigente", id_staff: 9, completado: true, fecha: ISODate("2026-10-10T21:00:00-05:00") },
+      { item: "Prueba de imagen y foco", id_staff: 9, completado: true, fecha: ISODate("2026-10-10T22:00:00-05:00") },
+      { item: "Prueba de sonido en sala", id_staff: 9, completado: false, fecha: null },
+      { item: "Calibrar altavoces de techo Atmos", id_staff: 9, completado: true, fecha: ISODate("2026-10-11T00:00:00-05:00") }
+    ],
+    estado_preparacion: "PENDIENTE"
+  },
+  {
+    id_funcion: 22,
+    id_sala: 5,
+    id_contrato: 10,
+    codigo_pelicula: "PA-PEL-010",
+    fecha_hora: ISODate("2026-10-12T14:00:00-05:00"),
+    formato: "IMAX",
+    idioma: "SUBTITULADA",
+    requisitos: {
+      proyeccion: { proyector: "IMAX con láser 4K dual", resolucion: "4K", relacion_aspecto: "1.43:1", brillo_min_fl: 22 },
+      audio: { sistema: "IMAX 12 canales", canales: 12, nivel_referencia_db: 85 },
+      imax: { certificacion_vigente: true, version_dcp: "IMAX DMR", alineacion_dual_laser: true, butacas_reclinables: 70 },
+      subtitulado: {
+        idioma: "es-CO",
+        formato_archivo: "SMPTE-TT (XML)",
+        tamano_fuente_pt: 42,
+        posicion: "inferior",
+        sincronia_verificada: true
+      }
+    },
+    dcp: {
+      kdm_valida_desde: ISODate("2026-10-10T14:00:00-05:00"),
+      kdm_valida_hasta: ISODate("2026-10-13T14:00:00-05:00"),
+      tamano_gb: 273
+    },
+    checklist: [
+      { item: "Ingestar DCP y validar hash", id_staff: 9, completado: true, fecha: ISODate("2026-10-11T14:00:00-05:00") },
+      { item: "Verificar KDM vigente", id_staff: 9, completado: true, fecha: ISODate("2026-10-11T15:00:00-05:00") },
+      { item: "Prueba de imagen y foco", id_staff: 9, completado: false, fecha: null },
+      { item: "Prueba de sonido en sala", id_staff: 9, completado: true, fecha: ISODate("2026-10-11T17:00:00-05:00") },
+      { item: "Alinear proyectores láser duales", id_staff: 9, completado: true, fecha: ISODate("2026-10-11T18:00:00-05:00") },
+      { item: "Verificar sincronía de subtítulos", id_staff: 9, completado: true, fecha: ISODate("2026-10-11T19:00:00-05:00") }
+    ],
+    estado_preparacion: "PENDIENTE"
+  },
+  {
+    id_funcion: 23,
+    id_sala: 4,
+    id_contrato: 11,
+    codigo_pelicula: "PA-PEL-011",
+    fecha_hora: ISODate("2026-10-12T17:00:00-05:00"),
+    formato: "3D",
+    idioma: "SUBTITULADA",
+    requisitos: {
+      proyeccion: {
+        proyector: "Christie CP4440-RGB (láser RGB)",
+        resolucion: "4K",
+        relacion_aspecto: "1.85:1",
+        brillo_min_fl: 6
+      },
+      audio: { sistema: "Dolby Digital 7.1", canales: 8, nivel_referencia_db: 82 },
+      gafas_3d: { tipo: "RealD pasivas", cantidad: 135, desinfeccion: "UV + paño microfibra", polarizador: "RealD XL" },
+      subtitulado: {
+        idioma: "es-CO",
+        formato_archivo: "SMPTE-TT (XML)",
+        tamano_fuente_pt: 42,
+        posicion: "inferior",
+        sincronia_verificada: false
+      }
+    },
+    dcp: {
+      kdm_valida_desde: ISODate("2026-10-10T17:00:00-05:00"),
+      kdm_valida_hasta: ISODate("2026-10-13T17:00:00-05:00"),
+      tamano_gb: 176
+    },
+    checklist: [
+      { item: "Ingestar DCP y validar hash", id_staff: 9, completado: true, fecha: ISODate("2026-10-11T17:00:00-05:00") },
+      { item: "Verificar KDM vigente", id_staff: 9, completado: false, fecha: null },
+      { item: "Prueba de imagen y foco", id_staff: 9, completado: true, fecha: ISODate("2026-10-11T19:00:00-05:00") },
+      { item: "Prueba de sonido en sala", id_staff: 9, completado: true, fecha: ISODate("2026-10-11T20:00:00-05:00") },
+      { item: "Desinfectar y contar gafas 3D", id_staff: 6, completado: true, fecha: ISODate("2026-10-11T21:00:00-05:00") },
+      { item: "Calibrar polarizador 3D", id_staff: 9, completado: false, fecha: null },
+      { item: "Verificar sincronía de subtítulos", id_staff: 9, completado: true, fecha: ISODate("2026-10-11T23:00:00-05:00") }
+    ],
+    estado_preparacion: "PENDIENTE"
+  },
+  {
+    id_funcion: 24,
+    id_sala: 3,
+    id_contrato: 12,
+    codigo_pelicula: "PA-PEL-012",
+    fecha_hora: ISODate("2026-10-12T20:00:00-05:00"),
+    formato: "3D",
+    idioma: "SUBTITULADA",
+    requisitos: {
+      proyeccion: {
+        proyector: "Christie CP4440-RGB (láser RGB)",
+        resolucion: "4K",
+        relacion_aspecto: "2.39:1",
+        brillo_min_fl: 6
+      },
+      audio: { sistema: "Dolby Digital 7.1", canales: 8, nivel_referencia_db: 82 },
+      gafas_3d: { tipo: "RealD pasivas", cantidad: 155, desinfeccion: "UV + paño microfibra", polarizador: "RealD XL" },
+      subtitulado: {
+        idioma: "es-CO",
+        formato_archivo: "SMPTE-TT (XML)",
+        tamano_fuente_pt: 42,
+        posicion: "inferior",
+        sincronia_verificada: true
+      },
+      evento_especial: {
+        tipo: "CONVERSATORIO_CON_ARTISTA",
+        invitado_id_artista: 12,
+        foro_posterior_min: 45,
+        moderador_id_staff: 12,
+        microfonos_inalambricos: 3,
+        requiere_seguridad_adicional: true
+      }
+    },
+    dcp: {
+      kdm_valida_desde: ISODate("2026-10-10T20:00:00-05:00"),
+      kdm_valida_hasta: ISODate("2026-10-13T20:00:00-05:00"),
+      tamano_gb: 166.4
+    },
+    checklist: [
+      { item: "Ingestar DCP y validar hash", id_staff: 9, completado: false, fecha: null },
+      { item: "Verificar KDM vigente", id_staff: 9, completado: true, fecha: ISODate("2026-10-11T21:00:00-05:00") },
+      { item: "Prueba de imagen y foco", id_staff: 9, completado: true, fecha: ISODate("2026-10-11T22:00:00-05:00") },
+      { item: "Prueba de sonido en sala", id_staff: 9, completado: true, fecha: ISODate("2026-10-11T23:00:00-05:00") },
+      { item: "Desinfectar y contar gafas 3D", id_staff: 6, completado: false, fecha: null },
+      { item: "Calibrar polarizador 3D", id_staff: 9, completado: true, fecha: ISODate("2026-10-12T01:00:00-05:00") },
+      { item: "Verificar sincronía de subtítulos", id_staff: 9, completado: true, fecha: ISODate("2026-10-12T02:00:00-05:00") },
+      {
+        item: "Coordinar llegada del artista invitado",
+        id_staff: 12,
+        completado: true,
+        fecha: ISODate("2026-10-12T03:00:00-05:00")
+      }
+    ],
+    estado_preparacion: "PENDIENTE"
+  },
+  {
+    id_funcion: 25,
+    id_sala: 3,
+    id_contrato: 1,
+    codigo_pelicula: "PA-PEL-001",
+    fecha_hora: ISODate("2026-10-13T14:00:00-05:00"),
+    formato: "2D",
+    idioma: "SUBTITULADA",
+    requisitos: {
+      proyeccion: {
+        proyector: "Christie CP4440-RGB (láser RGB)",
+        resolucion: "4K",
+        relacion_aspecto: "1.85:1",
+        brillo_min_fl: 14
+      },
+      audio: { sistema: "Dolby Digital 7.1", canales: 8, nivel_referencia_db: 82 },
+      subtitulado: {
+        idioma: "es-CO",
+        formato_archivo: "SMPTE-TT (XML)",
+        tamano_fuente_pt: 42,
+        posicion: "inferior",
+        sincronia_verificada: false
+      }
+    },
+    dcp: {
+      kdm_valida_desde: ISODate("2026-10-11T14:00:00-05:00"),
+      kdm_valida_hasta: ISODate("2026-10-14T14:00:00-05:00"),
+      tamano_gb: 145.2
+    },
+    checklist: [
+      { item: "Ingestar DCP y validar hash", id_staff: 9, completado: true, fecha: ISODate("2026-10-12T14:00:00-05:00") },
+      { item: "Verificar KDM vigente", id_staff: 9, completado: true, fecha: ISODate("2026-10-12T15:00:00-05:00") },
+      { item: "Prueba de imagen y foco", id_staff: 9, completado: true, fecha: ISODate("2026-10-12T16:00:00-05:00") },
+      { item: "Prueba de sonido en sala", id_staff: 9, completado: false, fecha: null },
+      { item: "Verificar sincronía de subtítulos", id_staff: 9, completado: true, fecha: ISODate("2026-10-12T18:00:00-05:00") }
+    ],
+    estado_preparacion: "PENDIENTE"
+  },
+  {
+    id_funcion: 26,
+    id_sala: 2,
+    id_contrato: 2,
+    codigo_pelicula: "PA-PEL-002",
+    fecha_hora: ISODate("2026-10-13T17:00:00-05:00"),
+    formato: "2D",
+    idioma: "ORIGINAL",
+    requisitos: {
+      proyeccion: { proyector: "Barco SP4K-15 (láser)", resolucion: "4K", relacion_aspecto: "1.85:1", brillo_min_fl: 14 },
+      audio: { sistema: "Dolby Digital 5.1", canales: 6, nivel_referencia_db: 82 }
+    },
+    dcp: {
+      kdm_valida_desde: ISODate("2026-10-11T17:00:00-05:00"),
+      kdm_valida_hasta: ISODate("2026-10-14T17:00:00-05:00"),
+      tamano_gb: 148.5
+    },
+    checklist: [
+      { item: "Ingestar DCP y validar hash", id_staff: 8, completado: true, fecha: ISODate("2026-10-12T17:00:00-05:00") },
+      { item: "Verificar KDM vigente", id_staff: 8, completado: true, fecha: ISODate("2026-10-12T18:00:00-05:00") },
+      { item: "Prueba de imagen y foco", id_staff: 8, completado: false, fecha: null },
+      { item: "Prueba de sonido en sala", id_staff: 8, completado: true, fecha: ISODate("2026-10-12T20:00:00-05:00") }
+    ],
+    estado_preparacion: "PENDIENTE"
+  },
+  {
+    id_funcion: 27,
+    id_sala: 1,
+    id_contrato: 3,
+    codigo_pelicula: "PA-PEL-003",
+    fecha_hora: ISODate("2026-10-13T20:00:00-05:00"),
+    formato: "2D",
+    idioma: "ORIGINAL",
+    requisitos: {
+      proyeccion: { proyector: "Barco SP4K-15 (láser)", resolucion: "4K", relacion_aspecto: "2.39:1", brillo_min_fl: 14 },
+      audio: { sistema: "Dolby Digital 7.1", canales: 8, nivel_referencia_db: 82 }
+    },
+    dcp: {
+      kdm_valida_desde: ISODate("2026-10-11T20:00:00-05:00"),
+      kdm_valida_hasta: ISODate("2026-10-14T20:00:00-05:00"),
+      tamano_gb: 129.8
+    },
+    checklist: [
+      { item: "Ingestar DCP y validar hash", id_staff: 8, completado: true, fecha: ISODate("2026-10-12T20:00:00-05:00") },
+      { item: "Verificar KDM vigente", id_staff: 8, completado: false, fecha: null },
+      { item: "Prueba de imagen y foco", id_staff: 8, completado: true, fecha: ISODate("2026-10-12T22:00:00-05:00") },
+      { item: "Prueba de sonido en sala", id_staff: 8, completado: true, fecha: ISODate("2026-10-12T23:00:00-05:00") }
+    ],
+    estado_preparacion: "PENDIENTE"
+  },
+  {
+    id_funcion: 28,
+    id_sala: 1,
+    id_contrato: 4,
+    codigo_pelicula: "PA-PEL-004",
+    fecha_hora: ISODate("2026-10-14T14:00:00-05:00"),
+    formato: "2D",
+    idioma: "ORIGINAL",
+    requisitos: {
+      proyeccion: { proyector: "Barco SP4K-15 (láser)", resolucion: "4K", relacion_aspecto: "1.85:1", brillo_min_fl: 14 },
+      audio: { sistema: "Dolby Digital 7.1", canales: 8, nivel_referencia_db: 82 },
+      evento_especial: {
+        tipo: "CONVERSATORIO_CON_ARTISTA",
+        invitado_id_artista: 4,
+        foro_posterior_min: 45,
+        moderador_id_staff: 12,
+        microfonos_inalambricos: 3,
+        requiere_seguridad_adicional: true
+      }
+    },
+    dcp: {
+      kdm_valida_desde: ISODate("2026-10-12T14:00:00-05:00"),
+      kdm_valida_hasta: ISODate("2026-10-15T14:00:00-05:00"),
+      tamano_gb: 169.4
+    },
+    checklist: [
+      { item: "Ingestar DCP y validar hash", id_staff: 8, completado: false, fecha: null },
+      { item: "Verificar KDM vigente", id_staff: 8, completado: true, fecha: ISODate("2026-10-13T15:00:00-05:00") },
+      { item: "Prueba de imagen y foco", id_staff: 8, completado: true, fecha: ISODate("2026-10-13T16:00:00-05:00") },
+      { item: "Prueba de sonido en sala", id_staff: 8, completado: true, fecha: ISODate("2026-10-13T17:00:00-05:00") },
+      { item: "Coordinar llegada del artista invitado", id_staff: 12, completado: false, fecha: null }
+    ],
+    estado_preparacion: "PENDIENTE"
+  },
+  {
+    id_funcion: 29,
+    id_sala: 6,
+    id_contrato: 5,
+    codigo_pelicula: "PA-PEL-005",
+    fecha_hora: ISODate("2026-10-14T17:00:00-05:00"),
+    formato: "35MM",
+    idioma: "ORIGINAL",
+    requisitos: {
+      proyeccion: {
+        proyector: "Kinoton FP38 (35 mm) + respaldo digital",
+        resolucion: "Analógica 35 mm",
+        relacion_aspecto: "1.85:1",
+        brillo_min_fl: 14,
+        copia_fisica: { rollos: 6, estado_copia: "Restaurada", empalmes_verificados: true }
+      },
+      audio: { sistema: "Dolby Digital 5.1", canales: 6, nivel_referencia_db: 82 },
+      evento_especial: { tipo: "CINECLUB", foro_posterior_min: 30, moderador_id_staff: 12, microfonos_inalambricos: 2 }
+    },
+    dcp: {
+      kdm_valida_desde: ISODate("2026-10-12T17:00:00-05:00"),
+      kdm_valida_hasta: ISODate("2026-10-15T17:00:00-05:00"),
+      tamano_gb: 137.5
+    },
+    checklist: [
+      { item: "Ingestar DCP y validar hash", id_staff: 8, completado: true, fecha: ISODate("2026-10-13T17:00:00-05:00") },
+      { item: "Verificar KDM vigente", id_staff: 8, completado: true, fecha: ISODate("2026-10-13T18:00:00-05:00") },
+      { item: "Prueba de imagen y foco", id_staff: 8, completado: true, fecha: ISODate("2026-10-13T19:00:00-05:00") },
+      { item: "Prueba de sonido en sala", id_staff: 8, completado: false, fecha: null },
+      {
+        item: "Revisar rollos y empalmes de la copia 35 mm",
+        id_staff: 8,
+        completado: true,
+        fecha: ISODate("2026-10-13T21:00:00-05:00")
+      },
+      { item: "Preparar micrófonos para foro", id_staff: 7, completado: true, fecha: ISODate("2026-10-13T22:00:00-05:00") }
+    ],
+    estado_preparacion: "PENDIENTE"
+  },
+  {
+    id_funcion: 30,
+    id_sala: 5,
+    id_contrato: 6,
+    codigo_pelicula: "PA-PEL-006",
+    fecha_hora: ISODate("2026-10-14T20:00:00-05:00"),
+    formato: "IMAX",
+    idioma: "ORIGINAL",
+    requisitos: {
+      proyeccion: { proyector: "IMAX con láser 4K dual", resolucion: "4K", relacion_aspecto: "1.43:1", brillo_min_fl: 22 },
+      audio: { sistema: "IMAX 12 canales", canales: 12, nivel_referencia_db: 85 },
+      imax: { certificacion_vigente: true, version_dcp: "IMAX DMR", alineacion_dual_laser: true, butacas_reclinables: 70 }
+    },
+    dcp: {
+      kdm_valida_desde: ISODate("2026-10-12T20:00:00-05:00"),
+      kdm_valida_hasta: ISODate("2026-10-15T20:00:00-05:00"),
+      tamano_gb: 216.3
+    },
+    checklist: [
+      { item: "Ingestar DCP y validar hash", id_staff: 9, completado: true, fecha: ISODate("2026-10-13T20:00:00-05:00") },
+      { item: "Verificar KDM vigente", id_staff: 9, completado: true, fecha: ISODate("2026-10-13T21:00:00-05:00") },
+      { item: "Prueba de imagen y foco", id_staff: 9, completado: false, fecha: null },
+      { item: "Prueba de sonido en sala", id_staff: 9, completado: false, fecha: null },
+      { item: "Alinear proyectores láser duales", id_staff: 9, completado: false, fecha: null }
+    ],
+    estado_preparacion: "CANCELADA",
+    observaciones: "Función cancelada en PostgreSQL; KDM revocada por la distribuidora."
+  },
+  {
+    id_funcion: 31,
+    id_sala: 5,
+    id_contrato: 7,
+    codigo_pelicula: "PA-PEL-007",
+    fecha_hora: ISODate("2026-10-15T14:00:00-05:00"),
+    formato: "DOLBY_ATMOS",
+    idioma: "ORIGINAL",
+    requisitos: {
+      proyeccion: {
+        proyector: "Christie CP4440-RGB (láser RGB)",
+        resolucion: "4K",
+        relacion_aspecto: "1.85:1",
+        brillo_min_fl: 14
+      },
+      audio: { sistema: "Dolby Atmos", canales: 64, nivel_referencia_db: 85 },
+      dolby_atmos: {
+        altavoces_techo: 24,
+        procesador: "Dolby CP950A",
+        archivo_audio: "IAB (Immersive Audio Bitstream)",
+        calibracion_previa: true
+      }
+    },
+    dcp: {
+      kdm_valida_desde: ISODate("2026-10-13T14:00:00-05:00"),
+      kdm_valida_hasta: ISODate("2026-10-16T14:00:00-05:00"),
+      tamano_gb: 111.1
+    },
+    checklist: [
+      { item: "Ingestar DCP y validar hash", id_staff: 9, completado: true, fecha: ISODate("2026-10-14T14:00:00-05:00") },
+      { item: "Verificar KDM vigente", id_staff: 9, completado: true, fecha: ISODate("2026-10-14T15:00:00-05:00") },
+      { item: "Prueba de imagen y foco", id_staff: 9, completado: true, fecha: ISODate("2026-10-14T16:00:00-05:00") },
+      { item: "Prueba de sonido en sala", id_staff: 9, completado: false, fecha: null },
+      { item: "Calibrar altavoces de techo Atmos", id_staff: 9, completado: false, fecha: null }
+    ],
+    estado_preparacion: "PENDIENTE"
+  },
+  {
+    id_funcion: 32,
+    id_sala: 4,
+    id_contrato: 8,
+    codigo_pelicula: "PA-PEL-008",
+    fecha_hora: ISODate("2026-10-15T17:00:00-05:00"),
+    formato: "3D",
+    idioma: "ORIGINAL",
+    requisitos: {
+      proyeccion: {
+        proyector: "Christie CP4440-RGB (láser RGB)",
+        resolucion: "4K",
+        relacion_aspecto: "1.85:1",
+        brillo_min_fl: 6
+      },
+      audio: { sistema: "Dolby Digital 7.1", canales: 8, nivel_referencia_db: 82 },
+      gafas_3d: { tipo: "RealD pasivas", cantidad: 135, desinfeccion: "UV + paño microfibra", polarizador: "RealD XL" },
+      evento_especial: {
+        tipo: "CONVERSATORIO_CON_ARTISTA",
+        invitado_id_artista: 8,
+        foro_posterior_min: 45,
+        moderador_id_staff: 12,
+        microfonos_inalambricos: 3,
+        requiere_seguridad_adicional: true
+      }
+    },
+    dcp: {
+      kdm_valida_desde: ISODate("2026-10-13T17:00:00-05:00"),
+      kdm_valida_hasta: ISODate("2026-10-16T17:00:00-05:00"),
+      tamano_gb: 206.4
+    },
+    checklist: [
+      { item: "Ingestar DCP y validar hash", id_staff: 9, completado: true, fecha: ISODate("2026-10-14T17:00:00-05:00") },
+      { item: "Verificar KDM vigente", id_staff: 9, completado: true, fecha: ISODate("2026-10-14T18:00:00-05:00") },
+      { item: "Prueba de imagen y foco", id_staff: 9, completado: true, fecha: ISODate("2026-10-14T19:00:00-05:00") },
+      { item: "Prueba de sonido en sala", id_staff: 9, completado: false, fecha: null },
+      { item: "Desinfectar y contar gafas 3D", id_staff: 6, completado: false, fecha: null },
+      { item: "Calibrar polarizador 3D", id_staff: 9, completado: false, fecha: null },
+      { item: "Coordinar llegada del artista invitado", id_staff: 12, completado: false, fecha: null }
+    ],
+    estado_preparacion: "PENDIENTE"
+  },
+  {
+    id_funcion: 33,
+    id_sala: 3,
+    id_contrato: 9,
+    codigo_pelicula: "PA-PEL-009",
+    fecha_hora: ISODate("2026-10-15T20:00:00-05:00"),
+    formato: "2D",
+    idioma: "ORIGINAL",
+    requisitos: {
+      proyeccion: {
+        proyector: "Christie CP4440-RGB (láser RGB)",
+        resolucion: "4K",
+        relacion_aspecto: "2.39:1",
+        brillo_min_fl: 14
+      },
+      audio: { sistema: "Dolby Digital 7.1", canales: 8, nivel_referencia_db: 82 }
+    },
+    dcp: {
+      kdm_valida_desde: ISODate("2026-10-13T20:00:00-05:00"),
+      kdm_valida_hasta: ISODate("2026-10-16T20:00:00-05:00"),
+      tamano_gb: 114.4
+    },
+    checklist: [
+      { item: "Ingestar DCP y validar hash", id_staff: 9, completado: true, fecha: ISODate("2026-10-14T20:00:00-05:00") },
+      { item: "Verificar KDM vigente", id_staff: 9, completado: true, fecha: ISODate("2026-10-14T21:00:00-05:00") },
+      { item: "Prueba de imagen y foco", id_staff: 9, completado: true, fecha: ISODate("2026-10-14T22:00:00-05:00") },
+      { item: "Prueba de sonido en sala", id_staff: 9, completado: false, fecha: null }
+    ],
+    estado_preparacion: "PENDIENTE"
+  },
+  {
+    id_funcion: 34,
+    id_sala: 3,
+    id_contrato: 10,
+    codigo_pelicula: "PA-PEL-010",
+    fecha_hora: ISODate("2026-10-16T14:00:00-05:00"),
+    formato: "3D",
+    idioma: "SUBTITULADA",
+    requisitos: {
+      proyeccion: {
+        proyector: "Christie CP4440-RGB (láser RGB)",
+        resolucion: "4K",
+        relacion_aspecto: "1.85:1",
+        brillo_min_fl: 6
+      },
+      audio: { sistema: "Dolby Digital 7.1", canales: 8, nivel_referencia_db: 82 },
+      gafas_3d: { tipo: "RealD pasivas", cantidad: 155, desinfeccion: "UV + paño microfibra", polarizador: "RealD XL" },
+      subtitulado: {
+        idioma: "es-CO",
+        formato_archivo: "SMPTE-TT (XML)",
+        tamano_fuente_pt: 42,
+        posicion: "inferior",
+        sincronia_verificada: true
+      }
+    },
+    dcp: {
+      kdm_valida_desde: ISODate("2026-10-14T14:00:00-05:00"),
+      kdm_valida_hasta: ISODate("2026-10-17T14:00:00-05:00"),
+      tamano_gb: 208
+    },
+    checklist: [
+      { item: "Ingestar DCP y validar hash", id_staff: 9, completado: true, fecha: ISODate("2026-10-15T14:00:00-05:00") },
+      { item: "Verificar KDM vigente", id_staff: 9, completado: true, fecha: ISODate("2026-10-15T15:00:00-05:00") },
+      { item: "Prueba de imagen y foco", id_staff: 9, completado: true, fecha: ISODate("2026-10-15T16:00:00-05:00") },
+      { item: "Prueba de sonido en sala", id_staff: 9, completado: false, fecha: null },
+      { item: "Desinfectar y contar gafas 3D", id_staff: 6, completado: false, fecha: null },
+      { item: "Calibrar polarizador 3D", id_staff: 9, completado: false, fecha: null },
+      { item: "Verificar sincronía de subtítulos", id_staff: 9, completado: false, fecha: null }
+    ],
+    estado_preparacion: "PENDIENTE"
+  },
+  {
+    id_funcion: 35,
+    id_sala: 2,
+    id_contrato: 11,
+    codigo_pelicula: "PA-PEL-011",
+    fecha_hora: ISODate("2026-10-16T17:00:00-05:00"),
+    formato: "2D",
+    idioma: "SUBTITULADA",
+    requisitos: {
+      proyeccion: { proyector: "Barco SP4K-15 (láser)", resolucion: "4K", relacion_aspecto: "1.85:1", brillo_min_fl: 14 },
+      audio: { sistema: "Dolby Digital 5.1", canales: 6, nivel_referencia_db: 82 },
+      subtitulado: {
+        idioma: "es-CO",
+        formato_archivo: "SMPTE-TT (XML)",
+        tamano_fuente_pt: 42,
+        posicion: "inferior",
+        sincronia_verificada: false
+      }
+    },
+    dcp: {
+      kdm_valida_desde: ISODate("2026-10-14T17:00:00-05:00"),
+      kdm_valida_hasta: ISODate("2026-10-17T17:00:00-05:00"),
+      tamano_gb: 121
+    },
+    checklist: [
+      { item: "Ingestar DCP y validar hash", id_staff: 8, completado: true, fecha: ISODate("2026-10-15T17:00:00-05:00") },
+      { item: "Verificar KDM vigente", id_staff: 8, completado: true, fecha: ISODate("2026-10-15T18:00:00-05:00") },
+      { item: "Prueba de imagen y foco", id_staff: 8, completado: true, fecha: ISODate("2026-10-15T19:00:00-05:00") },
+      { item: "Prueba de sonido en sala", id_staff: 8, completado: false, fecha: null },
+      { item: "Verificar sincronía de subtítulos", id_staff: 8, completado: false, fecha: null }
+    ],
+    estado_preparacion: "PENDIENTE"
+  },
+  {
+    id_funcion: 36,
+    id_sala: 1,
+    id_contrato: 12,
+    codigo_pelicula: "PA-PEL-012",
+    fecha_hora: ISODate("2026-10-16T20:00:00-05:00"),
+    formato: "2D",
+    idioma: "SUBTITULADA",
+    requisitos: {
+      proyeccion: { proyector: "Barco SP4K-15 (láser)", resolucion: "4K", relacion_aspecto: "2.39:1", brillo_min_fl: 14 },
+      audio: { sistema: "Dolby Digital 7.1", canales: 8, nivel_referencia_db: 82 },
+      subtitulado: {
+        idioma: "es-CO",
+        formato_archivo: "SMPTE-TT (XML)",
+        tamano_fuente_pt: 42,
+        posicion: "inferior",
+        sincronia_verificada: true
+      },
+      evento_especial: {
+        tipo: "CONVERSATORIO_CON_ARTISTA",
+        invitado_id_artista: 12,
+        foro_posterior_min: 45,
+        moderador_id_staff: 12,
+        microfonos_inalambricos: 3,
+        requiere_seguridad_adicional: true
+      }
+    },
+    dcp: {
+      kdm_valida_desde: ISODate("2026-10-14T20:00:00-05:00"),
+      kdm_valida_hasta: ISODate("2026-10-17T20:00:00-05:00"),
+      tamano_gb: 114.4
+    },
+    checklist: [
+      { item: "Ingestar DCP y validar hash", id_staff: 8, completado: true, fecha: ISODate("2026-10-15T20:00:00-05:00") },
+      { item: "Verificar KDM vigente", id_staff: 8, completado: true, fecha: ISODate("2026-10-15T21:00:00-05:00") },
+      { item: "Prueba de imagen y foco", id_staff: 8, completado: true, fecha: ISODate("2026-10-15T22:00:00-05:00") },
+      { item: "Prueba de sonido en sala", id_staff: 8, completado: false, fecha: null },
+      { item: "Verificar sincronía de subtítulos", id_staff: 8, completado: false, fecha: null },
+      { item: "Coordinar llegada del artista invitado", id_staff: 12, completado: false, fecha: null }
+    ],
+    estado_preparacion: "PENDIENTE"
+  }
+]);
