@@ -38,3 +38,44 @@ db.fichas_tecnicas_peliculas.insertOne({
     { premio: "Palma de Oro", festival: "Cannes", anio: 2019 }
   ]
 });
+
+//Segunda Coleccion
+// Borrar la colección si ya existe
+db.requisitos_proyeccion.drop();
+// Crear la colección nueva y vacía
+db.createCollection("requisitos_proyeccion");
+
+// Insertar un documento .
+db.requisitos_proyeccion.insertOne({
+  id_funcion: 1,
+  id_sala: 1,
+  id_contrato: 1,
+  codigo_pelicula: "PA-PEL-001",
+  fecha_hora: ISODate("2026-10-05T14:00:00-05:00"),
+  formato: "2D",
+  idioma: "SUBTITULADA",
+  requisitos: {
+    proyeccion: { proyector: "Barco SP4K-15 (láser)", resolucion: "4K", relacion_aspecto: "1.85:1", brillo_min_fl: 14 },
+    audio: { sistema: "Dolby Digital 7.1", canales: 8, nivel_referencia_db: 82 },
+    subtitulado: {
+      idioma: "es-CO",
+      formato_archivo: "SMPTE-TT (XML)",
+      tamano_fuente_pt: 42,
+      posicion: "inferior",
+      sincronia_verificada: true
+    }
+  },
+  dcp: {
+    kdm_valida_desde: ISODate("2026-10-03T14:00:00-05:00"),
+    kdm_valida_hasta: ISODate("2026-10-06T14:00:00-05:00"),
+    tamano_gb: 145.2
+  },
+  checklist: [
+    { item: "Ingestar DCP y validar hash", id_staff: 8, completado: true, fecha: ISODate("2026-10-04T14:00:00-05:00") },
+    { item: "Verificar KDM vigente", id_staff: 8, completado: true, fecha: ISODate("2026-10-04T15:00:00-05:00") },
+    { item: "Prueba de imagen y foco", id_staff: 8, completado: true, fecha: ISODate("2026-10-04T16:00:00-05:00") },
+    { item: "Prueba de sonido en sala", id_staff: 8, completado: true, fecha: ISODate("2026-10-04T17:00:00-05:00") },
+    { item: "Verificar sincronía de subtítulos", id_staff: 8, completado: true, fecha: ISODate("2026-10-04T18:00:00-05:00") }
+  ],
+  estado_preparacion: "LISTA"
+});
