@@ -1,7 +1,91 @@
 //Creción y uso de base de datos 
 use("pantalla_azul");
 //Creación de la colleccíon fichas_tecnicas_peliculas
-db.createCollection("fichas_tecnicas_peliculas");
+db.fichas_tecnicas_peliculas.drop();
+db.createCollection("fichas_tecnicas_peliculas", {
+  validator: {
+    $jsonSchema: {
+      bsonType: "object",
+      title: "Ficha técnica de película",
+      // Campos obligatorios (equivale a NOT NULL en PostgreSQL)
+      required: ["codigo_pelicula", "id_contrato", "titulo", "anio_estreno", "generos",
+                 "direccion", "elenco", "versiones", "idiomas", "subtitulos",
+                 "clasificaciones", "estado_catalogo", "actualizado_en"],
+      properties: {
+        codigo_pelicula: { bsonType: "string", minLength: 1, description: "Código de la película, ej. PA-PEL-001" },
+        id_contrato:     { bsonType: ["number", "null"], minimum: 1,
+                           description: "REFERENCIA a contratos.id_contrato; null si la película está en evaluación" },
+        titulo:          { bsonType: "string", minLength: 1 },
+        titulo_original: { bsonType: "string", minLength: 1 },
+        anio_estreno:    { bsonType: "number", minimum: 1895, maximum: 2030 },
+        paises_origen:   { bsonType: "array", items: { bsonType: "string" } },
+        generos:         { bsonType: "array", minItems: 1, items: { bsonType: "string" } },
+        sinopsis:        { bsonType: "string" },
+        direccion: {
+          bsonType: "array", minItems: 1,
+          items: {
+            bsonType: "object",
+            required: ["nombre"],
+            properties: {
+              id_artista: { bsonType: ["number", "null"], description: "REFERENCIA a actores_directores.id_artista" },
+              nombre:     { bsonType: "string", minLength: 1 }
+            }
+          }
+        },
+        elenco: {
+          bsonType: "array", minItems: 1,
+          items: {
+            bsonType: "object",
+            required: ["nombre", "personaje", "orden"],
+            properties: {
+              id_artista: { bsonType: ["number", "null"], description: "REFERENCIA a actores_directores.id_artista" },
+              nombre:     { bsonType: "string", minLength: 1 },
+              personaje:  { bsonType: "string", minLength: 1 },
+              orden:      { bsonType: "number", minimum: 1 }
+            }
+          }
+        },
+        versiones: {
+          bsonType: "array", minItems: 1,
+          items: {
+            bsonType: "object",
+            required: ["tipo", "duracion_min", "formatos"],
+            properties: {
+              tipo:         { enum: ["CINE", "DIRECTOR_CUT", "EXTENDIDA", "REMASTERIZADA_4K", "IMAX"] },
+              duracion_min: { bsonType: "number", minimum: 40, maximum: 300 },
+              formatos:     { bsonType: "array", minItems: 1, items: { enum: ["2D", "3D", "IMAX", "DOLBY_ATMOS", "35MM"] } }
+            }
+          }
+        },
+        idiomas: {
+          bsonType: "object",
+          required: ["original"],
+          properties: {
+            original: { bsonType: "array", minItems: 1, items: { bsonType: "string" } },
+            doblajes: { bsonType: "array", items: { bsonType: "string" } }
+          }
+        },
+        subtitulos: { bsonType: "array", items: { bsonType: "string" } },
+        clasificaciones: {
+          bsonType: "array", minItems: 1,
+          items: {
+            bsonType: "object",
+            required: ["pais", "clasificacion"],
+            properties: {
+              pais:          { bsonType: "string", minLength: 2, maxLength: 2 },
+              clasificacion: { bsonType: "string", minLength: 1 },
+              entidad:       { bsonType: "string" }
+            }
+          }
+        },
+        premios:         { bsonType: "array" },
+        // Valores permitidos (equivale a un CHECK ... IN (...))
+        estado_catalogo: { enum: ["EN_CARTELERA", "CONTRATO_FINALIZADO", "CONTRATO_CANCELADO", "EN_EVALUACION"] },
+        actualizado_en:  { bsonType: "date" }
+      }
+    }
+  }
+});
 //Insertar datos en la colección fichas_tecnicas_peliculas
 db.fichas_tecnicas_peliculas.insertOne({
   codigo_pelicula: "PA-PEL-001",
