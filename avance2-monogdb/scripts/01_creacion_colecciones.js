@@ -7,7 +7,7 @@ db.createCollection("fichas_tecnicas_peliculas", {
     $jsonSchema: {
       bsonType: "object",
       title: "Ficha técnica de película",
-      // Campos obligatorios (equivale a NOT NULL en PostgreSQL)
+      
       required: ["codigo_pelicula", "id_contrato", "titulo", "anio_estreno", "generos",
                  "direccion", "elenco", "versiones", "idiomas", "subtitulos",
                  "clasificaciones", "estado_catalogo", "actualizado_en"],
@@ -127,7 +127,65 @@ db.fichas_tecnicas_peliculas.insertOne({
 // Borrar la colección si ya existe
 db.requisitos_proyeccion.drop();
 // Crear la colección nueva y vacía
-db.createCollection("requisitos_proyeccion");
+db.createCollection("requisitos_proyeccion", {
+  validator: {
+    $jsonSchema: {
+      bsonType: "object",
+      title: "Requisitos técnicos de una función",
+      
+      required: ["id_funcion", "id_sala", "id_contrato", "codigo_pelicula", "fecha_hora",
+                 "formato", "idioma", "requisitos", "checklist", "estado_preparacion"],
+      properties: {
+        id_funcion:      { bsonType: "number", minimum: 1, description: "REFERENCIA a funciones.id_funcion" },
+        id_sala:         { bsonType: "number", minimum: 1, description: "REFERENCIA a salas.id_sala" },
+        id_contrato:     { bsonType: "number", minimum: 1, description: "REFERENCIA a contratos.id_contrato" },
+        codigo_pelicula: { bsonType: "string", minLength: 1 },
+        fecha_hora:      { bsonType: "date" },
+        
+        formato:         { enum: ["2D", "3D", "IMAX", "DOLBY_ATMOS", "35MM"] },
+        idioma:          { enum: ["ORIGINAL", "SUBTITULADA", "DOBLADA"] },
+        
+        requisitos: {
+          bsonType: "object",
+          required: ["proyeccion", "audio"],
+          properties: {
+            proyeccion:      { bsonType: "object", required: ["proyector", "resolucion"] },
+            audio:           { bsonType: "object", required: ["sistema", "canales"] },
+            gafas_3d:        { bsonType: "object" },
+            imax:            { bsonType: "object" },
+            dolby_atmos:     { bsonType: "object" },
+            subtitulado:     { bsonType: "object" },
+            evento_especial: { bsonType: "object" }
+          }
+        },
+        dcp: {
+          bsonType: "object",
+          properties: {
+            kdm_valida_desde: { bsonType: "date" },
+            kdm_valida_hasta: { bsonType: "date" },
+            tamano_gb:        { bsonType: "number", minimum: 0 }
+          }
+        },
+        checklist: {
+          bsonType: "array", minItems: 1,
+          items: {
+            bsonType: "object",
+            required: ["item", "completado"],
+            properties: {
+              item:       { bsonType: "string", minLength: 1 },
+              id_staff:   { bsonType: ["number", "null"], description: "REFERENCIA a staff.id_staff" },
+              completado: { bsonType: "bool" },
+              fecha:      { bsonType: ["date", "null"] }
+            }
+          }
+        },
+        estado_preparacion: { enum: ["LISTA", "PENDIENTE", "CANCELADA"] },
+        observaciones:      { bsonType: "string" }
+      }
+    }
+  }
+});
+
 
 // Insertar un documento .
 db.requisitos_proyeccion.insertOne({
