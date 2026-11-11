@@ -295,11 +295,58 @@ db.resenas_peliculas.createIndex({ texto: "text", titulo: "text" }, { name: "txt
 
 
 
-// NUmero 4.... .... collection reportes_incidentes
+// NUmero 4 collection reportes_incidentes
 
 
-db.createCollection("reportes_incidentes");
-
+db.reportes_incidentes.drop();
+db.createCollection("reportes_incidentes", {
+  validator: {
+    $jsonSchema: {
+      bsonType: "object",
+      title: "Reporte de incidente",
+      // Campos obligatorios (equivale a NOT NULL en PostgreSQL)
+      required: ["codigo_incidente", "tipo", "fecha_reporte", "id_sala", "reportado_por",
+                 "severidad", "estado", "descripcion", "detalle", "seguimiento"],
+      properties: {
+        codigo_incidente: { bsonType: "string", minLength: 1, description: "Código del incidente, ej. INC-2026-0001" },
+        // Valores permitidos (equivale a un CHECK ... IN (...))
+        tipo:             { enum: ["FALLA_TECNICA", "QUEJA_SERVICIO", "SEGURIDAD"] },
+        fecha_reporte:    { bsonType: "date" },
+        id_sala:          { bsonType: ["number", "null"], description: "REFERENCIA a salas.id_sala (null = áreas comunes)" },
+        id_funcion:       { bsonType: ["number", "null"], description: "REFERENCIA a funciones.id_funcion" },
+        reportado_por: {
+          bsonType: "object",
+          required: ["rol"],
+          properties: {
+            rol:           { enum: ["STAFF", "ESPECTADOR"] },
+            id_staff:      { bsonType: ["number", "null"], description: "REFERENCIA a staff.id_staff" },
+            id_espectador: { bsonType: ["number", "null"], description: "REFERENCIA a espectadores.id_espectador" }
+          }
+        },
+        severidad:   { enum: ["BAJA", "MEDIA", "ALTA", "CRITICA"] },
+        estado:      { enum: ["ABIERTO", "EN_PROCESO", "RESUELTO", "CERRADO"] },
+        descripcion: { bsonType: "string", minLength: 10 },
+        // El detalle se deja como objeto libre a propósito: sus campos
+        // cambian según el tipo de incidente (por eso esta colección vive
+        // en MongoDB y no en una tabla con columnas fijas).
+        detalle:     { bsonType: "object" },
+        seguimiento: {
+          bsonType: "array",
+          items: {
+            bsonType: "object",
+            required: ["fecha", "accion"],
+            properties: {
+              fecha:    { bsonType: "date" },
+              id_staff: { bsonType: ["number", "null"], description: "REFERENCIA a staff.id_staff" },
+              accion:   { bsonType: "string", minLength: 1 }
+            }
+          }
+        },
+        fecha_cierre: { bsonType: ["date", "null"] }
+      }
+    }
+  }
+});
 
 db.reportes_incidentes.insertMany([
   {
