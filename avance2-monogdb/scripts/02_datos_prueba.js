@@ -2741,3 +2741,686 @@ db.resenas_peliculas.insertMany([
     estado_moderacion: "PUBLICADA"
   }
 ]);
+
+
+
+
+
+// 4. REPORTES_INCIDENTES (33 documentos)
+// Fallas técnicas, quejas de servicio e incidentes de seguridad
+
+db.reportes_incidentes.deleteMany({});   // limpia la colección para poder ejecutar el script varias veces
+
+db.reportes_incidentes.insertMany([
+  {
+    codigo_incidente: "INC-2026-0001",
+    tipo: "QUEJA_SERVICIO",
+    fecha_reporte: ISODate("2026-10-02T12:50:00-05:00"),
+    id_sala: null,
+    id_funcion: 1,
+    reportado_por: { rol: "ESPECTADOR", id_espectador: 22 },
+    severidad: "BAJA",
+    estado: "CERRADO",
+    descripcion: "La taquilla aplicó tarifa general a un menor con boleta de niño.",
+    detalle: {
+      area: "TAQUILLA",
+      canal_queja: "PRESENCIAL",
+      id_venta: 1,
+      id_staff_involucrado: 2,
+      compensacion: { tipo: "NINGUNA", valor: 0 }
+    },
+    seguimiento: [
+      {
+        fecha: ISODate("2026-10-02T13:00:00-05:00"),
+        id_staff: 2,
+        accion: "Se verificó la venta; la tarifa estaba bien aplicada (factor 0,60)."
+      }
+    ],
+    fecha_cierre: ISODate("2026-10-02T13:00:00-05:00")
+  },
+  {
+    codigo_incidente: "INC-2026-0002",
+    tipo: "FALLA_TECNICA",
+    fecha_reporte: ISODate("2026-10-05T14:52:00-05:00"),
+    id_sala: 1,
+    id_funcion: 1,
+    reportado_por: { rol: "STAFF", id_staff: 8 },
+    severidad: "MEDIA",
+    estado: "CERRADO",
+    descripcion: "Pérdida de subtítulos durante 6 minutos en la función de Parasite.",
+    detalle: {
+      categoria: "PROYECCION",
+      equipo: "Servidor de cine IMS3000 sala 1",
+      codigo_error: "SUB-TT-404",
+      minutos_interrupcion: 6,
+      funcion_reprogramada: false
+    },
+    seguimiento: [
+      {
+        fecha: ISODate("2026-10-05T14:58:00-05:00"),
+        id_staff: 8,
+        accion: "Se recargó el archivo SMPTE-TT y se reanudó la función."
+      },
+      {
+        fecha: ISODate("2026-10-06T09:00:00-05:00"),
+        id_staff: 12,
+        accion: "Caso cerrado; se agregó verificación de subtítulos al checklist."
+      }
+    ],
+    fecha_cierre: ISODate("2026-10-06T09:00:00-05:00")
+  },
+  {
+    codigo_incidente: "INC-2026-0003",
+    tipo: "QUEJA_SERVICIO",
+    fecha_reporte: ISODate("2026-10-05T16:30:00-05:00"),
+    id_sala: 6,
+    id_funcion: 2,
+    reportado_por: { rol: "ESPECTADOR", id_espectador: 10 },
+    severidad: "BAJA",
+    estado: "CERRADO",
+    descripcion: "Butacas de la sala de autor incómodas, varias con el espaldar flojo.",
+    detalle: { area: "ACOMODACION", canal_queja: "WEB", compensacion: { tipo: "NINGUNA", valor: 0 } },
+    seguimiento: [ { fecha: ISODate("2026-10-07T09:00:00-05:00"), id_staff: 12, accion: "Mantenimiento ajustó 9 butacas." } ],
+    fecha_cierre: ISODate("2026-10-07T09:00:00-05:00")
+  },
+  {
+    codigo_incidente: "INC-2026-0004",
+    tipo: "FALLA_TECNICA",
+    fecha_reporte: ISODate("2026-10-05T20:41:00-05:00"),
+    id_sala: 5,
+    id_funcion: 3,
+    reportado_por: { rol: "STAFF", id_staff: 9 },
+    severidad: "BAJA",
+    estado: "CERRADO",
+    descripcion: "Ruido de fondo en un altavoz de techo durante la función premium.",
+    detalle: {
+      categoria: "AUDIO",
+      equipo: "Altavoz de techo Dolby Atmos #14",
+      minutos_interrupcion: 0,
+      funcion_reprogramada: false,
+      repuestos: [ { pieza: "Cable XLR 10 m", cantidad: 1, costo: 85000 } ]
+    },
+    seguimiento: [
+      { fecha: ISODate("2026-10-06T10:00:00-05:00"), id_staff: 9, accion: "Cable reemplazado y altavoz recalibrado." }
+    ],
+    fecha_cierre: ISODate("2026-10-06T10:00:00-05:00")
+  },
+  {
+    codigo_incidente: "INC-2026-0005",
+    tipo: "SEGURIDAD",
+    fecha_reporte: ISODate("2026-10-05T21:30:00-05:00"),
+    id_sala: 5,
+    id_funcion: 3,
+    reportado_por: { rol: "STAFF", id_staff: 6 },
+    severidad: "ALTA",
+    estado: "CERRADO",
+    descripcion: "Espectador con desmayo durante la función premium.",
+    detalle: {
+      categoria: "EMERGENCIA_MEDICA",
+      personas_involucradas: 1,
+      requirio_evacuacion: false,
+      lesionados: 0,
+      autoridades_notificadas: [ "Línea 123 - ambulancia" ]
+    },
+    seguimiento: [
+      { fecha: ISODate("2026-10-05T21:32:00-05:00"), id_staff: 6, accion: "Primeros auxilios en sala." },
+      {
+        fecha: ISODate("2026-10-05T21:50:00-05:00"),
+        id_staff: 12,
+        accion: "Paramédicos atendieron; el espectador se retiró por sus propios medios."
+      }
+    ],
+    fecha_cierre: ISODate("2026-10-05T22:00:00-05:00")
+  },
+  {
+    codigo_incidente: "INC-2026-0006",
+    tipo: "FALLA_TECNICA",
+    fecha_reporte: ISODate("2026-10-06T17:20:00-05:00"),
+    id_sala: 4,
+    id_funcion: 5,
+    reportado_por: { rol: "STAFF", id_staff: 9 },
+    severidad: "ALTA",
+    estado: "CERRADO",
+    descripcion: "El polarizador 3D se sobrecalentó y la imagen perdió brillo.",
+    detalle: {
+      categoria: "SISTEMA_3D",
+      equipo: "Polarizador RealD XL sala 4",
+      codigo_error: "RD-TEMP-07",
+      minutos_interrupcion: 14,
+      funcion_reprogramada: false
+    },
+    seguimiento: [
+      { fecha: ISODate("2026-10-06T17:34:00-05:00"), id_staff: 9, accion: "Se pasó a proyección 2D para terminar la función." },
+      {
+        fecha: ISODate("2026-10-07T11:00:00-05:00"),
+        id_staff: 12,
+        accion: "Proveedor reemplazó el ventilador del polarizador."
+      }
+    ],
+    fecha_cierre: ISODate("2026-10-07T11:00:00-05:00")
+  },
+  {
+    codigo_incidente: "INC-2026-0007",
+    tipo: "QUEJA_SERVICIO",
+    fecha_reporte: ISODate("2026-10-06T19:50:00-05:00"),
+    id_sala: null,
+    id_funcion: 6,
+    reportado_por: { rol: "ESPECTADOR", id_espectador: 16 },
+    severidad: "MEDIA",
+    estado: "CERRADO",
+    descripcion: "Fila de confitería de más de 25 minutos; la espectadora perdió el inicio.",
+    detalle: { area: "CONFITERIA", canal_queja: "APP", id_venta: 7, compensacion: { tipo: "BONO_CONFITERIA", valor: 15000 } },
+    seguimiento: [
+      {
+        fecha: ISODate("2026-10-07T10:00:00-05:00"),
+        id_staff: 12,
+        accion: "Se envió bono de confitería y se reforzó el turno de 20:00."
+      }
+    ],
+    fecha_cierre: ISODate("2026-10-07T10:00:00-05:00")
+  },
+  {
+    codigo_incidente: "INC-2026-0008",
+    tipo: "FALLA_TECNICA",
+    fecha_reporte: ISODate("2026-10-07T14:35:00-05:00"),
+    id_sala: 3,
+    id_funcion: 7,
+    reportado_por: { rol: "STAFF", id_staff: 6 },
+    severidad: "ALTA",
+    estado: "CERRADO",
+    descripcion: "Corte de imagen por reinicio del servidor de cine.",
+    detalle: {
+      categoria: "PROYECCION",
+      equipo: "Servidor de cine IMS3000 sala 3",
+      codigo_error: "IMS-REBOOT",
+      minutos_interrupcion: 9,
+      funcion_reprogramada: false
+    },
+    seguimiento: [
+      {
+        fecha: ISODate("2026-10-07T14:44:00-05:00"),
+        id_staff: 9,
+        accion: "Servidor reiniciado, función reanudada en el minuto 31."
+      },
+      { fecha: ISODate("2026-10-08T08:30:00-05:00"), id_staff: 12, accion: "Actualización de firmware programada." }
+    ],
+    fecha_cierre: ISODate("2026-10-08T08:30:00-05:00")
+  },
+  {
+    codigo_incidente: "INC-2026-0009",
+    tipo: "SEGURIDAD",
+    fecha_reporte: ISODate("2026-10-07T18:20:00-05:00"),
+    id_sala: null,
+    reportado_por: { rol: "STAFF", id_staff: 10 },
+    severidad: "MEDIA",
+    estado: "CERRADO",
+    descripcion: "Hurto de un celular en la zona de confitería.",
+    detalle: {
+      categoria: "HURTO",
+      personas_involucradas: 2,
+      requirio_evacuacion: false,
+      autoridades_notificadas: [ "Policía Nacional - CAI cercano" ]
+    },
+    seguimiento: [
+      {
+        fecha: ISODate("2026-10-07T18:30:00-05:00"),
+        id_staff: 12,
+        accion: "Se entregaron grabaciones de cámaras a la Policía."
+      }
+    ],
+    fecha_cierre: ISODate("2026-10-08T10:00:00-05:00")
+  },
+  {
+    codigo_incidente: "INC-2026-0010",
+    tipo: "FALLA_TECNICA",
+    fecha_reporte: ISODate("2026-10-07T20:05:00-05:00"),
+    id_sala: 1,
+    id_funcion: 9,
+    reportado_por: { rol: "ESPECTADOR", id_espectador: 6 },
+    severidad: "MEDIA",
+    estado: "RESUELTO",
+    descripcion: "Espectador reporta imagen oscura en la sala Bolívar.",
+    detalle: {
+      categoria: "PROYECCION",
+      equipo: "Proyector Barco SP4K-15 sala 1",
+      minutos_interrupcion: 0,
+      funcion_reprogramada: false
+    },
+    seguimiento: [
+      {
+        fecha: ISODate("2026-10-08T10:00:00-05:00"),
+        id_staff: 8,
+        accion: "Se midieron 11 fL; se ajustó la potencia del láser a 14 fL."
+      }
+    ],
+    fecha_cierre: null
+  },
+  {
+    codigo_incidente: "INC-2026-0011",
+    tipo: "QUEJA_SERVICIO",
+    fecha_reporte: ISODate("2026-10-07T21:40:00-05:00"),
+    id_sala: 1,
+    id_funcion: 9,
+    reportado_por: { rol: "ESPECTADOR", id_espectador: 23 },
+    severidad: "BAJA",
+    estado: "CERRADO",
+    descripcion: "Sala con restos de crispetas de la función anterior.",
+    detalle: { area: "ASEO", canal_queja: "PRESENCIAL", id_venta: 24, compensacion: { tipo: "NINGUNA", valor: 0 } },
+    seguimiento: [ { fecha: ISODate("2026-10-07T21:50:00-05:00"), id_staff: 5, accion: "Se reforzó el aseo entre funciones." } ],
+    fecha_cierre: ISODate("2026-10-07T21:50:00-05:00")
+  },
+  {
+    codigo_incidente: "INC-2026-0012",
+    tipo: "SEGURIDAD",
+    fecha_reporte: ISODate("2026-10-08T17:40:00-05:00"),
+    id_sala: 6,
+    id_funcion: 11,
+    reportado_por: { rol: "STAFF", id_staff: 7 },
+    severidad: "MEDIA",
+    estado: "CERRADO",
+    descripcion: "Discusión entre dos espectadores por puestos durante el cineclub.",
+    detalle: { categoria: "ALTERCADO", personas_involucradas: 2, requirio_evacuacion: false, lesionados: 0 },
+    seguimiento: [
+      { fecha: ISODate("2026-10-08T17:45:00-05:00"), id_staff: 7, accion: "Se reubicó a uno de los espectadores." }
+    ],
+    fecha_cierre: ISODate("2026-10-08T17:45:00-05:00")
+  },
+  {
+    codigo_incidente: "INC-2026-0013",
+    tipo: "FALLA_TECNICA",
+    fecha_reporte: ISODate("2026-10-08T20:10:00-05:00"),
+    id_sala: 5,
+    id_funcion: 12,
+    reportado_por: { rol: "STAFF", id_staff: 9 },
+    severidad: "ALTA",
+    estado: "CERRADO",
+    descripcion: "Distorsión en graves del sistema Dolby Atmos durante Los otros.",
+    detalle: {
+      categoria: "AUDIO",
+      equipo: "Procesador Dolby CP950A",
+      codigo_error: "ATMOS-BASS-CLIP",
+      minutos_interrupcion: 0,
+      funcion_reprogramada: false
+    },
+    seguimiento: [
+      { fecha: ISODate("2026-10-09T09:00:00-05:00"), id_staff: 9, accion: "Recalibración completa de subwoofers." },
+      { fecha: ISODate("2026-10-09T12:00:00-05:00"), id_staff: 12, accion: "Se respondió a las reseñas relacionadas." }
+    ],
+    fecha_cierre: ISODate("2026-10-09T12:00:00-05:00")
+  },
+  {
+    codigo_incidente: "INC-2026-0014",
+    tipo: "QUEJA_SERVICIO",
+    fecha_reporte: ISODate("2026-10-08T22:10:00-05:00"),
+    id_sala: 5,
+    id_funcion: 12,
+    reportado_por: { rol: "ESPECTADOR", id_espectador: 20 },
+    severidad: "ALTA",
+    estado: "CERRADO",
+    descripcion: "Mala calidad de audio en función premium; solicita reembolso.",
+    detalle: { area: "ACOMODACION", canal_queja: "WEB", id_venta: 35, compensacion: { tipo: "BOLETA_CORTESIA", valor: 32000 } },
+    seguimiento: [
+      { fecha: ISODate("2026-10-09T12:00:00-05:00"), id_staff: 12, accion: "Se entregó boleta de cortesía para sala premium." }
+    ],
+    fecha_cierre: ISODate("2026-10-09T12:00:00-05:00")
+  },
+  {
+    codigo_incidente: "INC-2026-0015",
+    tipo: "QUEJA_SERVICIO",
+    fecha_reporte: ISODate("2026-10-09T15:10:00-05:00"),
+    id_sala: null,
+    reportado_por: { rol: "ESPECTADOR", id_espectador: 3 },
+    severidad: "MEDIA",
+    estado: "CERRADO",
+    descripcion: "Se cobró dos veces una compra web.",
+    detalle: { area: "VENTA_WEB", canal_queja: "CORREO", id_venta: 46, compensacion: { tipo: "REEMBOLSO", valor: 54000 } },
+    seguimiento: [
+      { fecha: ISODate("2026-10-09T16:00:00-05:00"), id_staff: 12, accion: "Se verificó el doble cobro con la pasarela." },
+      { fecha: ISODate("2026-10-11T10:00:00-05:00"), id_staff: 12, accion: "Reembolso aplicado." }
+    ],
+    fecha_cierre: ISODate("2026-10-11T10:00:00-05:00")
+  },
+  {
+    codigo_incidente: "INC-2026-0016",
+    tipo: "FALLA_TECNICA",
+    fecha_reporte: ISODate("2026-10-09T17:05:00-05:00"),
+    id_sala: 4,
+    id_funcion: 14,
+    reportado_por: { rol: "STAFF", id_staff: 9 },
+    severidad: "MEDIA",
+    estado: "CERRADO",
+    descripcion: "Aire acondicionado de la sala Guadalupe sin enfriar.",
+    detalle: {
+      categoria: "CLIMATIZACION",
+      equipo: "Unidad manejadora de aire UMA-4",
+      minutos_interrupcion: 0,
+      funcion_reprogramada: false,
+      repuestos: [ { pieza: "Correa del ventilador", cantidad: 1, costo: 120000 } ]
+    },
+    seguimiento: [
+      { fecha: ISODate("2026-10-10T08:00:00-05:00"), id_staff: 12, accion: "Técnico externo reemplazó la correa." }
+    ],
+    fecha_cierre: ISODate("2026-10-10T08:00:00-05:00")
+  },
+  {
+    codigo_incidente: "INC-2026-0017",
+    tipo: "SEGURIDAD",
+    fecha_reporte: ISODate("2026-10-09T20:15:00-05:00"),
+    id_sala: 3,
+    id_funcion: 15,
+    reportado_por: { rol: "STAFF", id_staff: 6 },
+    severidad: "CRITICA",
+    estado: "CERRADO",
+    descripcion: "Activación de la alarma de humo; se evacua la sala Monserrate.",
+    detalle: {
+      categoria: "EVACUACION",
+      personas_involucradas: 96,
+      requirio_evacuacion: true,
+      lesionados: 0,
+      autoridades_notificadas: [ "Bomberos Bogotá" ]
+    },
+    seguimiento: [
+      { fecha: ISODate("2026-10-09T20:16:00-05:00"), id_staff: 6, accion: "Evacuación completada en 4 minutos." },
+      {
+        fecha: ISODate("2026-10-09T20:40:00-05:00"),
+        id_staff: 12,
+        accion: "Bomberos confirman falsa alarma por máquina de humo de evento."
+      },
+      { fecha: ISODate("2026-10-09T20:55:00-05:00"), id_staff: 9, accion: "Función reanudada." }
+    ],
+    fecha_cierre: ISODate("2026-10-09T21:00:00-05:00")
+  },
+  {
+    codigo_incidente: "INC-2026-0018",
+    tipo: "FALLA_TECNICA",
+    fecha_reporte: ISODate("2026-10-10T11:15:00-05:00"),
+    id_sala: null,
+    reportado_por: { rol: "STAFF", id_staff: 1 },
+    severidad: "CRITICA",
+    estado: "CERRADO",
+    descripcion: "Caída de la pasarela de pagos de la venta web durante 40 minutos.",
+    detalle: {
+      categoria: "SISTEMA_VENTAS",
+      equipo: "Pasarela de pagos web/app",
+      codigo_error: "PAY-503",
+      minutos_interrupcion: 40,
+      funcion_reprogramada: false
+    },
+    seguimiento: [
+      { fecha: ISODate("2026-10-10T11:20:00-05:00"), id_staff: 12, accion: "Se activó la venta solo por taquilla." },
+      { fecha: ISODate("2026-10-10T11:55:00-05:00"), id_staff: 12, accion: "Proveedor restableció el servicio." }
+    ],
+    fecha_cierre: ISODate("2026-10-10T12:30:00-05:00")
+  },
+  {
+    codigo_incidente: "INC-2026-0019",
+    tipo: "QUEJA_SERVICIO",
+    fecha_reporte: ISODate("2026-10-10T11:35:00-05:00"),
+    id_sala: null,
+    reportado_por: { rol: "ESPECTADOR", id_espectador: 27 },
+    severidad: "MEDIA",
+    estado: "CERRADO",
+    descripcion: "No pudo comprar en la web durante la caída de la pasarela.",
+    detalle: { area: "VENTA_WEB", canal_queja: "WEB", compensacion: { tipo: "NINGUNA", valor: 0 } },
+    seguimiento: [
+      { fecha: ISODate("2026-10-10T12:40:00-05:00"), id_staff: 12, accion: "Se informó que el servicio fue restablecido." }
+    ],
+    fecha_cierre: ISODate("2026-10-10T12:40:00-05:00")
+  },
+  {
+    codigo_incidente: "INC-2026-0020",
+    tipo: "FALLA_TECNICA",
+    fecha_reporte: ISODate("2026-10-10T13:40:00-05:00"),
+    id_sala: 3,
+    id_funcion: 16,
+    reportado_por: { rol: "STAFF", id_staff: 6 },
+    severidad: "BAJA",
+    estado: "CERRADO",
+    descripcion: "La sala Monserrate quedó fría por exceso de aire acondicionado.",
+    detalle: { categoria: "CLIMATIZACION", equipo: "Termostato sala 3", minutos_interrupcion: 0, funcion_reprogramada: false },
+    seguimiento: [ { fecha: ISODate("2026-10-10T13:55:00-05:00"), id_staff: 6, accion: "Termostato ajustado a 22 °C." } ],
+    fecha_cierre: ISODate("2026-10-10T13:55:00-05:00")
+  },
+  {
+    codigo_incidente: "INC-2026-0021",
+    tipo: "QUEJA_SERVICIO",
+    fecha_reporte: ISODate("2026-10-10T18:00:00-05:00"),
+    id_sala: 2,
+    id_funcion: 17,
+    reportado_por: { rol: "ESPECTADOR", id_espectador: 17 },
+    severidad: "BAJA",
+    estado: "CERRADO",
+    descripcion: "El acomodador no estaba en la entrada de la sala al iniciar la función.",
+    detalle: { area: "ACOMODACION", canal_queja: "PRESENCIAL", id_venta: 26, compensacion: { tipo: "NINGUNA", valor: 0 } },
+    seguimiento: [
+      {
+        fecha: ISODate("2026-10-11T09:00:00-05:00"),
+        id_staff: 12,
+        accion: "Se ajustó el turno de acomodadores para la sala 2."
+      }
+    ],
+    fecha_cierre: ISODate("2026-10-11T09:00:00-05:00")
+  },
+  {
+    codigo_incidente: "INC-2026-0022",
+    tipo: "QUEJA_SERVICIO",
+    fecha_reporte: ISODate("2026-10-11T09:30:00-05:00"),
+    id_sala: null,
+    reportado_por: { rol: "ESPECTADOR", id_espectador: 28 },
+    severidad: "BAJA",
+    estado: "RESUELTO",
+    descripcion: "La app no muestra el código QR de la boleta comprada.",
+    detalle: { area: "APP", canal_queja: "APP", id_venta: 29, compensacion: { tipo: "NINGUNA", valor: 0 } },
+    seguimiento: [
+      { fecha: ISODate("2026-10-11T10:15:00-05:00"), id_staff: 12, accion: "Se reenvió la boleta al correo del espectador." }
+    ],
+    fecha_cierre: null
+  },
+  {
+    codigo_incidente: "INC-2026-0023",
+    tipo: "SEGURIDAD",
+    fecha_reporte: ISODate("2026-10-11T16:40:00-05:00"),
+    id_sala: 6,
+    id_funcion: 20,
+    reportado_por: { rol: "STAFF", id_staff: 12 },
+    severidad: "ALTA",
+    estado: "CERRADO",
+    descripcion: "Persona sin acreditación intentó ingresar al camerino del artista invitado.",
+    detalle: { categoria: "ACCESO_NO_AUTORIZADO", personas_involucradas: 1, requirio_evacuacion: false },
+    seguimiento: [
+      {
+        fecha: ISODate("2026-10-11T16:45:00-05:00"),
+        id_staff: 12,
+        accion: "Se reforzó el control de acceso con un supervisor."
+      }
+    ],
+    fecha_cierre: ISODate("2026-10-11T16:45:00-05:00")
+  },
+  {
+    codigo_incidente: "INC-2026-0024",
+    tipo: "FALLA_TECNICA",
+    fecha_reporte: ISODate("2026-10-12T19:30:00-05:00"),
+    id_sala: 3,
+    id_funcion: 24,
+    reportado_por: { rol: "STAFF", id_staff: 9 },
+    severidad: "MEDIA",
+    estado: "EN_PROCESO",
+    descripcion: "Lámpara de emergencia del pasillo izquierdo parpadea durante la función.",
+    detalle: {
+      categoria: "ELECTRICA",
+      equipo: "Luminaria de emergencia L-3-07",
+      minutos_interrupcion: 0,
+      funcion_reprogramada: false
+    },
+    seguimiento: [ { fecha: ISODate("2026-10-13T09:00:00-05:00"), id_staff: 12, accion: "Se solicitó repuesto al proveedor." } ],
+    fecha_cierre: null
+  },
+  {
+    codigo_incidente: "INC-2026-0025",
+    tipo: "SEGURIDAD",
+    fecha_reporte: ISODate("2026-10-12T20:30:00-05:00"),
+    id_sala: 3,
+    id_funcion: 24,
+    reportado_por: { rol: "STAFF", id_staff: 6 },
+    severidad: "MEDIA",
+    estado: "RESUELTO",
+    descripcion: "Caída de una espectadora en las escaleras por iluminación deficiente.",
+    detalle: { categoria: "EMERGENCIA_MEDICA", personas_involucradas: 1, requirio_evacuacion: false, lesionados: 1 },
+    seguimiento: [
+      {
+        fecha: ISODate("2026-10-12T20:35:00-05:00"),
+        id_staff: 6,
+        accion: "Atención de primeros auxilios; golpe leve en la rodilla."
+      }
+    ],
+    fecha_cierre: null
+  },
+  {
+    codigo_incidente: "INC-2026-0026",
+    tipo: "FALLA_TECNICA",
+    fecha_reporte: ISODate("2026-10-14T18:45:00-05:00"),
+    id_sala: 5,
+    id_funcion: 30,
+    reportado_por: { rol: "STAFF", id_staff: 9 },
+    severidad: "CRITICA",
+    estado: "CERRADO",
+    descripcion: "Falla de la tarjeta de un proyector láser IMAX; la función se cancela.",
+    detalle: {
+      categoria: "PROYECCION",
+      equipo: "Proyector láser IMAX (unidad B)",
+      codigo_error: "IMAX-LSR-B-FAIL",
+      minutos_interrupcion: 0,
+      funcion_reprogramada: true,
+      repuestos: [ { pieza: "Tarjeta controladora láser", cantidad: 1, costo: 9800000 } ]
+    },
+    seguimiento: [
+      {
+        fecha: ISODate("2026-10-14T18:50:00-05:00"),
+        id_staff: 12,
+        accion: "Se cancela la función 30 y se anulan las ventas en PostgreSQL."
+      },
+      { fecha: ISODate("2026-10-17T15:00:00-05:00"), id_staff: 9, accion: "Tarjeta instalada y certificación IMAX revalidada." }
+    ],
+    fecha_cierre: ISODate("2026-10-17T15:00:00-05:00")
+  },
+  {
+    codigo_incidente: "INC-2026-0027",
+    tipo: "QUEJA_SERVICIO",
+    fecha_reporte: ISODate("2026-10-14T19:05:00-05:00"),
+    id_sala: 5,
+    id_funcion: 30,
+    reportado_por: { rol: "ESPECTADOR", id_espectador: 35 },
+    severidad: "ALTA",
+    estado: "CERRADO",
+    descripcion: "Función cancelada: solicita devolución del dinero (venta anulada).",
+    detalle: {
+      area: "TAQUILLA",
+      canal_queja: "PRESENCIAL",
+      id_venta: 21,
+      id_staff_involucrado: 3,
+      compensacion: { tipo: "REEMBOLSO", valor: 64000 }
+    },
+    seguimiento: [
+      { fecha: ISODate("2026-10-14T19:10:00-05:00"), id_staff: 3, accion: "Venta 21 anulada en PostgreSQL." },
+      { fecha: ISODate("2026-10-15T10:00:00-05:00"), id_staff: 12, accion: "Reembolso confirmado." }
+    ],
+    fecha_cierre: ISODate("2026-10-15T10:00:00-05:00")
+  },
+  {
+    codigo_incidente: "INC-2026-0028",
+    tipo: "QUEJA_SERVICIO",
+    fecha_reporte: ISODate("2026-10-14T19:20:00-05:00"),
+    id_sala: 5,
+    id_funcion: 30,
+    reportado_por: { rol: "ESPECTADOR", id_espectador: 30 },
+    severidad: "ALTA",
+    estado: "CERRADO",
+    descripcion: "Función cancelada: solicita reprogramación en lugar de reembolso.",
+    detalle: {
+      area: "TAQUILLA",
+      canal_queja: "PRESENCIAL",
+      id_venta: 37,
+      id_staff_involucrado: 3,
+      compensacion: { tipo: "BOLETA_CORTESIA", valor: 32000 }
+    },
+    seguimiento: [
+      { fecha: ISODate("2026-10-14T19:30:00-05:00"), id_staff: 3, accion: "Venta 37 anulada; se emite boleta de cortesía." }
+    ],
+    fecha_cierre: ISODate("2026-10-14T19:30:00-05:00")
+  },
+  {
+    codigo_incidente: "INC-2026-0029",
+    tipo: "QUEJA_SERVICIO",
+    fecha_reporte: ISODate("2026-10-15T13:00:00-05:00"),
+    id_sala: null,
+    reportado_por: { rol: "ESPECTADOR", id_espectador: 34 },
+    severidad: "BAJA",
+    estado: "ABIERTO",
+    descripcion: "Precio de combo de confitería distinto al publicado en la app.",
+    detalle: { area: "CONFITERIA", canal_queja: "APP", compensacion: { tipo: "NINGUNA", valor: 0 } },
+    seguimiento: [],
+    fecha_cierre: null
+  },
+  {
+    codigo_incidente: "INC-2026-0030",
+    tipo: "FALLA_TECNICA",
+    fecha_reporte: ISODate("2026-10-15T16:50:00-05:00"),
+    id_sala: 4,
+    id_funcion: 32,
+    reportado_por: { rol: "STAFF", id_staff: 9 },
+    severidad: "BAJA",
+    estado: "ABIERTO",
+    descripcion: "Inventario de gafas 3D por debajo del mínimo requerido (faltan 12).",
+    detalle: { categoria: "SISTEMA_3D", equipo: "Gafas RealD pasivas", minutos_interrupcion: 0, funcion_reprogramada: false },
+    seguimiento: [],
+    fecha_cierre: null
+  },
+  {
+    codigo_incidente: "INC-2026-0031",
+    tipo: "SEGURIDAD",
+    fecha_reporte: ISODate("2026-10-15T17:30:00-05:00"),
+    id_sala: 4,
+    id_funcion: 32,
+    reportado_por: { rol: "STAFF", id_staff: 9 },
+    severidad: "BAJA",
+    estado: "ABIERTO",
+    descripcion: "Puerta de emergencia de la sala Guadalupe no cierra correctamente.",
+    detalle: { categoria: "ACCESO_NO_AUTORIZADO", personas_involucradas: 0, requirio_evacuacion: false },
+    seguimiento: [],
+    fecha_cierre: null
+  },
+  {
+    codigo_incidente: "INC-2026-0032",
+    tipo: "QUEJA_SERVICIO",
+    fecha_reporte: ISODate("2026-10-16T12:00:00-05:00"),
+    id_sala: null,
+    reportado_por: { rol: "ESPECTADOR", id_espectador: 31 },
+    severidad: "MEDIA",
+    estado: "EN_PROCESO",
+    descripcion: "Solicita factura electrónica que no llegó al correo.",
+    detalle: { area: "VENTA_WEB", canal_queja: "CORREO", id_venta: 34 },
+    seguimiento: [ { fecha: ISODate("2026-10-16T15:00:00-05:00"), id_staff: 12, accion: "Se escaló al área de contabilidad." } ],
+    fecha_cierre: null
+  },
+  {
+    codigo_incidente: "INC-2026-0033",
+    tipo: "FALLA_TECNICA",
+    fecha_reporte: ISODate("2026-10-16T13:30:00-05:00"),
+    id_sala: 3,
+    id_funcion: 34,
+    reportado_por: { rol: "STAFF", id_staff: 9 },
+    severidad: "MEDIA",
+    estado: "ABIERTO",
+    descripcion: "Sincronía de subtítulos pendiente de verificación antes de la función.",
+    detalle: {
+      categoria: "PROYECCION",
+      equipo: "Servidor de cine IMS3000 sala 3",
+      minutos_interrupcion: 0,
+      funcion_reprogramada: false
+    },
+    seguimiento: [],
+    fecha_cierre: null
+  }
+]);
+
+
