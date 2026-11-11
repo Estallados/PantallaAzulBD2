@@ -105,3 +105,82 @@ db.resenas_peliculas.insertOne({
 });
 
 db.resenas_peliculas.createIndex({ texto: "text", titulo: "text" }, { name: "txt_resena", default_language: "spanish" });
+
+
+
+// NUmero 4.... .... collection reportes_incidentes
+
+
+db.createCollection("reportes_incidentes");
+
+
+db.reportes_incidentes.insertMany([
+  {
+    codigo_incidente: "INC-2026-0002",
+    tipo: "FALLA_TECNICA",
+    fecha_reporte: ISODate("2026-10-05T14:52:00-05:00"),
+    id_sala: 1,
+    id_funcion: 1,
+    reportado_por: { rol: "STAFF", id_staff: 8 },
+    severidad: "MEDIA",
+    estado: "CERRADO",
+    descripcion: "Pérdida de subtítulos durante 6 minutos en la función de Parasite.",
+    detalle: {
+      categoria: "PROYECCION",
+      equipo: "Servidor de cine IMS3000 sala 1",
+      codigo_error: "SUB-TT-404",
+      minutos_interrupcion: 6,
+      funcion_reprogramada: false
+    },
+    seguimiento: [
+      { fecha: ISODate("2026-10-05T14:58:00-05:00"), id_staff: 8, accion: "Se recargó el archivo SMPTE-TT y se reanudó la función." },
+      { fecha: ISODate("2026-10-06T09:00:00-05:00"), id_staff: 12, accion: "Caso cerrado; se agregó verificación de subtítulos al checklist." }
+    ],
+    fecha_cierre: ISODate("2026-10-06T09:00:00-05:00")
+  },
+  {
+    codigo_incidente: "INC-2026-0001",
+    tipo: "QUEJA_SERVICIO",
+    fecha_reporte: ISODate("2026-10-02T12:50:00-05:00"),
+    id_sala: null,
+    id_funcion: 1,
+    reportado_por: { rol: "ESPECTADOR", id_espectador: 22 },
+    severidad: "BAJA",
+    estado: "CERRADO",
+    descripcion: "La taquilla aplicó tarifa general a un menor con boleta de niño.",
+    detalle: {
+      area: "TAQUILLA",
+      canal_queja: "PRESENCIAL",
+      id_venta: 1,
+      id_staff_involucrado: 2,
+      compensacion: { tipo: "NINGUNA", valor: 0 }
+    },
+    seguimiento: [
+      { fecha: ISODate("2026-10-02T13:00:00-05:00"), id_staff: 2, accion: "Se verificó la venta; la tarifa estaba bien aplicada (factor 0,60)." }
+    ],
+    fecha_cierre: ISODate("2026-10-02T13:00:00-05:00")
+  },
+  {
+    codigo_incidente: "INC-2026-0005",
+    tipo: "SEGURIDAD",
+    fecha_reporte: ISODate("2026-10-05T21:30:00-05:00"),
+    id_sala: 5,
+    id_funcion: 3,
+    reportado_por: { rol: "STAFF", id_staff: 6 },
+    severidad: "ALTA",
+    estado: "CERRADO",
+    descripcion: "Espectador con desmayo durante la función premium.",
+    detalle: {
+      categoria: "EMERGENCIA_MEDICA",
+      personas_involucradas: 1,
+      requirio_evacuacion: false,
+      lesionados: 0,
+      autoridades_notificadas: [ "Línea 123 - ambulancia" ]
+    },
+    seguimiento: [
+      { fecha: ISODate("2026-10-05T21:32:00-05:00"), id_staff: 6, accion: "Primeros auxilios en sala." },
+      { fecha: ISODate("2026-10-05T21:50:00-05:00"), id_staff: 12, accion: "Paramédicos atendieron; el espectador se retiró por sus propios medios." }
+    ],
+    fecha_cierre: ISODate("2026-10-05T22:00:00-05:00")
+  }
+]);
