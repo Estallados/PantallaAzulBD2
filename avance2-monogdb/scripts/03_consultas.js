@@ -53,3 +53,20 @@ printjson(
     { _id: 0, id_espectador: 1, autor_alias: 1, calificacion: 1, texto: 1, fecha: 1 }
   ).sort({ fecha: -1 }).toArray()
 );
+
+// ---------------------------------------------------------------------
+// CONSULTA 4 (aggregate) · Calificación promedio por película
+// Promedio y total de reseñas publicadas por película, de mejor a peor.
+// ---------------------------------------------------------------------
+print("\n=== CONSULTA 4 (aggregate): calificación promedio por película ===");
+printjson(
+  db.resenas_peliculas.aggregate([
+    { $match: { estado_moderacion: "PUBLICADA" } },
+    { $group: {
+        _id: "$id_contrato",
+        promedio: { $avg: "$calificacion" },
+        total_resenas: { $sum: 1 }
+    } },
+    { $sort: { promedio: -1 } }
+  ]).toArray()
+);
