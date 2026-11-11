@@ -223,7 +223,52 @@ db.requisitos_proyeccion.insertOne({
 });
 
 db.resenas_peliculas.drop();
-db.createCollection("resenas_peliculas");
+db.createCollection("resenas_peliculas", {
+  validator: {
+    $jsonSchema: {
+      bsonType: "object",
+      title: "Reseña de película",
+      // Campos obligatorios (equivale a NOT NULL en PostgreSQL)
+      required: ["id_contrato", "codigo_pelicula", "autor_alias", "calificacion", "texto",
+                 "fecha", "verificada", "estado_moderacion"],
+      properties: {
+        id_contrato:     { bsonType: "number", minimum: 1, description: "REFERENCIA a contratos.id_contrato" },
+        codigo_pelicula: { bsonType: "string", minLength: 1 },
+        id_espectador:   { bsonType: ["number", "null"], description: "REFERENCIA a espectadores.id_espectador (null = anónima)" },
+        id_venta:        { bsonType: ["number", "null"], description: "REFERENCIA a ventas.id_venta (compra verificada)" },
+        autor_alias:     { bsonType: "string", minLength: 1 },
+        // Rango permitido (equivale a CHECK (calificacion BETWEEN 1 AND 5))
+        calificacion:    { bsonType: "number", minimum: 1, maximum: 5 },
+        titulo:          { bsonType: "string", maxLength: 120 },
+        texto:           { bsonType: "string", minLength: 10, maxLength: 3000 },
+        fecha:           { bsonType: "date" },
+        verificada:      { bsonType: "bool" },
+        spoiler:         { bsonType: "bool" },
+        etiquetas:       { bsonType: "array", items: { bsonType: "string" } },
+        calificaciones_detalle: {
+          bsonType: "object",
+          properties: {
+            imagen:    { bsonType: "number", minimum: 1, maximum: 5 },
+            sonido:    { bsonType: "number", minimum: 1, maximum: 5 },
+            comodidad: { bsonType: "number", minimum: 1, maximum: 5 }
+          }
+        },
+        votos_utiles:    { bsonType: "number", minimum: 0 },
+        respuesta_empresa: {
+          bsonType: "object",
+          required: ["id_staff", "texto", "fecha"],
+          properties: {
+            id_staff: { bsonType: "number", minimum: 1, description: "REFERENCIA a staff.id_staff" },
+            texto:    { bsonType: "string", minLength: 1 },
+            fecha:    { bsonType: "date" }
+          }
+        },
+        // Valores permitidos (equivale a un CHECK ... IN (...))
+        estado_moderacion: { enum: ["PUBLICADA", "EN_REVISION", "OCULTA"] }
+      }
+    }
+  }
+});
 
 // Insertar un documento.
 db.resenas_peliculas.insertOne({
