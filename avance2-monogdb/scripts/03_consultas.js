@@ -38,3 +38,18 @@ printjson(
     { $sort: { promedio: -1, total_resenas: -1 } }
   ]).toArray()
 );
+
+
+
+// ---------------------------------------------------------------------
+// CONSULTA 3 (find) · Reseñas publicadas de una película
+// se busca por id_contrato
+// Orden: de la reseña más reciente a la más antigua.
+
+print("\n=== CONSULTA 3 (find): reseñas publicadas de Parasite (id_contrato 1) ===");
+printjson(
+  db.resenas_peliculas.find(
+    { id_contrato: 1, estado_moderacion: "PUBLICADA" },
+    { _id: 0, id_espectador: 1, autor_alias: 1, calificacion: 1, texto: 1, fecha: 1 }
+  ).sort({ fecha: -1 }).toArray()
+);
