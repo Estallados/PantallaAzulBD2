@@ -3424,3 +3424,33 @@ db.reportes_incidentes.insertMany([
 ]);
 
 
+// 5. CONTEO Y VERIFICACIÓN DE IDENTIFICADORES COMPARTIDOS
+// Cuenta los documentos de cada colección y revisa que los ids que
+// apuntan a PostgreSQL.
+
+print("\n== Documentos cargados ==");
+["fichas_tecnicas_peliculas", "requisitos_proyeccion", "resenas_peliculas", "reportes_incidentes"]
+  .forEach(function (c) { print(" - " + c.padEnd(28) + db.getCollection(c).countDocuments()); });
+
+const RANGOS_PG = { id_sala: 6, id_artista: 40, id_contrato: 14, id_funcion: 36, id_espectador: 36, id_staff: 12, id_venta: 53 };
+const CAMPOS = [
+
+  ["fichas_tecnicas_peliculas", "id_contrato", "id_contrato"], ["fichas_tecnicas_peliculas", "elenco.id_artista", "id_artista"],
+  ["fichas_tecnicas_peliculas", "direccion.id_artista", "id_artista"],
+  ["requisitos_proyeccion", "id_funcion", "id_funcion"], ["requisitos_proyeccion", "id_sala", "id_sala"],
+  ["requisitos_proyeccion", "id_contrato", "id_contrato"], ["requisitos_proyeccion", "checklist.id_staff", "id_staff"],
+  ["resenas_peliculas", "id_contrato", "id_contrato"], ["resenas_peliculas", "id_espectador", "id_espectador"],
+  ["resenas_peliculas", "id_venta", "id_venta"], ["resenas_peliculas", "respuesta_empresa.id_staff", "id_staff"],
+  ["reportes_incidentes", "id_sala", "id_sala"], ["reportes_incidentes", "id_funcion", "id_funcion"],
+  ["reportes_incidentes", "reportado_por.id_staff", "id_staff"], ["reportes_incidentes", "reportado_por.id_espectador", "id_espectador"],
+  ["reportes_incidentes", "detalle.id_venta", "id_venta"]
+];
+print("\n== Verificación de identificadores compartidos con PostgreSQL ==");
+
+CAMPOS.forEach(function ([col, campo, pk]) {
+  const valores = db.getCollection(col).distinct(campo).filter(v => v !== null);
+  const fuera = valores.filter(v => v < 1 || v > RANGOS_PG[pk]);
+  print("  " + (fuera.length ? "[REVISAR]" : "[OK]") + " " + (col + "." + campo).padEnd(52) + " -> " + pk.padEnd(14) +
+        valores.length + " valores distintos" + (fuera.length ? "; fuera de rango: " + fuera : ""));
+});
+
