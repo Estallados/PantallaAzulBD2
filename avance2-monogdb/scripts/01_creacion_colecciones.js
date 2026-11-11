@@ -79,3 +79,29 @@ db.requisitos_proyeccion.insertOne({
   ],
   estado_preparacion: "LISTA"
 });
+
+db.resenas_peliculas.drop();
+db.createCollection("resenas_peliculas");
+
+// Insertar un documento.
+db.resenas_peliculas.insertOne({
+  id_contrato: 1,
+  codigo_pelicula: "PA-PEL-001",
+  id_espectador: 22,
+  id_venta: 1,
+  autor_alias: "Johanna F.",
+  calificacion: 5,
+  titulo: "Obra maestra",
+  texto: "La tensión entre las dos familias está construida con una precisión que asusta. El giro de la mitad me dejó sin aire.",
+  fecha: ISODate("2026-10-05T17:00:00-05:00"),
+  verificada: true,
+  etiquetas: [ "fotografía", "actuaciones" ],
+  respuesta_empresa: {
+    id_staff: 12,
+    texto: "¡Gracias por acompañarnos! Nos alegra que haya disfrutado la función. Lo esperamos en la próxima.",
+    fecha: ISODate("2026-10-07T21:00:00-05:00")
+  },
+  estado_moderacion: "PUBLICADA"
+});
+
+db.resenas_peliculas.createIndex({ texto: "text", titulo: "text" }, { name: "txt_resena", default_language: "spanish" });
