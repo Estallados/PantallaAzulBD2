@@ -43,10 +43,10 @@ printjson(
 
 // ---------------------------------------------------------------------
 // CONSULTA 3 (find) · Reseñas publicadas de una película
-// se busca por id_contrato
+// se busca por id_contrato, además de traer el id espectador, autro_aias_calificacion, texto, fecha con el valor de 1
 // Orden: de la reseña más reciente a la más antigua.
 
-print("\n=== CONSULTA 3 (find): reseñas publicadas de Parasite (id_contrato 1) ===");
+print("\n CONSULTA 3 find: reseñas publicadas de Parasite id_1");
 printjson(
   db.resenas_peliculas.find(
     { id_contrato: 1, estado_moderacion: "PUBLICADA" },
