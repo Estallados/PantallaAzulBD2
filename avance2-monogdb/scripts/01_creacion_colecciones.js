@@ -418,3 +418,54 @@ db.reportes_incidentes.insertMany([
     fecha_cierre: ISODate("2026-10-05T22:00:00-05:00")
   }
 ]);
+
+// ---------------------------------------------------------------------
+// 5. PRUEBAS DE LOS VALIDADORES $jsonSchema
+// Pruebas de inserción de documentos inválidos para comprobar que
+// MongoDB rechace los registros que incumplen las reglas de validación
+// (código 121 = Document failed validation) en las cuatro colecciones.
+// ---------------------------------------------------------------------
+function probarRechazo(coleccion, documento, motivo) {
+  try {
+    db.getCollection(coleccion).insertOne(documento);
+    print("  [FALLÓ LA PRUEBA] se aceptó un documento inválido en " + coleccion);
+  } catch (e) {
+    print("  [OK] " + coleccion + " rechazó: " + motivo + " (código " + e.code + ")");
+  }
+}
+
+print("\n== Pruebas de validación $jsonSchema ==");
+
+probarRechazo("fichas_tecnicas_peliculas",
+  { codigo_pelicula: "PA-PEL-999", id_contrato: 1, anio_estreno: 1800 },
+  "faltan campos obligatorios y el año está fuera de rango");
+
+probarRechazo("requisitos_proyeccion",
+  { id_funcion: 1, id_sala: 1, id_contrato: 1, codigo_pelicula: "PA-PEL-001",
+    fecha_hora: new Date(), formato: "4DX", idioma: "ORIGINAL",
+    requisitos: { proyeccion: { proyector: "x", resolucion: "4K" }, audio: { sistema: "x", canales: 6 } },
+    checklist: [ { item: "Prueba", completado: true } ], estado_preparacion: "LISTA" },
+  "formato '4DX' no permitido");
+
+probarRechazo("resenas_peliculas",
+  { id_contrato: 1, codigo_pelicula: "PA-PEL-001", autor_alias: "Ana", calificacion: 7,
+    texto: "Muy buena película.", fecha: new Date(), verificada: false, estado_moderacion: "PUBLICADA" },
+  "calificación fuera del rango 1 a 5");
+
+probarRechazo("resenas_peliculas",
+  { id_contrato: "uno", codigo_pelicula: "PA-PEL-001", autor_alias: "Ana", calificacion: 4,
+    texto: "Muy buena película.", fecha: new Date(), verificada: false, estado_moderacion: "PUBLICADA" },
+  "id_contrato no es un número");
+
+probarRechazo("reportes_incidentes",
+  { codigo_incidente: "INC-2026-9999", tipo: "INCENDIO", fecha_reporte: new Date(), id_sala: 1,
+    reportado_por: { rol: "STAFF", id_staff: 8 }, severidad: "URGENTE", estado: "ABIERTO",
+    descripcion: "Prueba de un incidente inválido", detalle: {}, seguimiento: [] },
+  "tipo y severidad no permitidos");
+
+// Confirma qué colecciones tienen $jsonSchema
+print("\n== Colecciones con $jsonSchema ==");
+db.getCollectionInfos().forEach(function (c) {
+  const tieneSchema = !!(c.options.validator && c.options.validator.$jsonSchema);
+  print(" - " + c.name + " | $jsonSchema: " + (tieneSchema ? "SÍ" : "NO"));
+});
