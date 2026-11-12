@@ -70,3 +70,21 @@ printjson(
     { $sort: { promedio: -1 } }
   ]).toArray()
 );
+
+// ---------------------------------------------------------------------
+// CONSULTA 5 (aggregate) · Fallas técnicas por sala
+// Total de fallas y minutos de interrupción acumulados por sala,
+// ordenados de mayor a menor según la cantidad de fallas.
+// ---------------------------------------------------------------------
+print("\n=== CONSULTA 5 (aggregate): fallas técnicas por sala ===");
+printjson(
+  db.reportes_incidentes.aggregate([
+    { $match: { tipo: "FALLA_TECNICA" } },
+    { $group: {
+        _id: "$id_sala",
+        total_fallas: { $sum: 1 },
+        minutos_interrupcion: { $sum: "$detalle.minutos_interrupcion" }
+    } },
+    { $sort: { total_fallas: -1 } }
+  ]).toArray()
+);
