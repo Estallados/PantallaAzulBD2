@@ -88,3 +88,20 @@ printjson(
     { $sort: { total_fallas: -1 } }
   ]).toArray()
 );
+
+// --------------------------------------------------------------------- 
+// CONSULTA 6 (aggregate) · Funciones por formato de proyección 
+// Cantidad de funciones y tamaño promedio del DCP por formato, 
+// ordenados de mayor a menor según el número de funciones. 
+// --------------------------------------------------------------------- 
+print("\n=== CONSULTA 6 (aggregate): funciones por formato de proyección ==="); 
+printjson( 
+  db.requisitos_proyeccion.aggregate([ 
+    { $group: { 
+        _id: "$formato", 
+        total_funciones: { $sum: 1 }, 
+        tamano_promedio_dcp_gb: { $avg: "$dcp.tamano_gb" } 
+    } }, 
+    { $sort: { total_funciones: -1 } } 
+  ]).toArray() 
+); 
