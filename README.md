@@ -6,7 +6,8 @@ Grupo **Estallados**. Pantalla Azul es una cadena de cine independiente de Bogot
 
 | GitHub | Integrante |
 |---|---|
-| Camilooop7 / Luis Camilo Vivas Cruz | Luis Camilo Vivas Cruz |
+| Camilo Peláez Perez| |
+|Luis Camilo Vivas Cruz | |
 | HatosJeisson | |
 | kevx2705 | |
 | Sealpaca-16 | |
