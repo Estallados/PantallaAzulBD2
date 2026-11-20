@@ -1,0 +1,721 @@
+{
+  "info": {
+    "name": "Pantalla Azul · Integración PostgreSQL + MongoDB",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Módulo de exposición de la entrega final. Ejecutar primero integracion/preparar_demo.py y levantar la API con uvicorn en el puerto 8000. Las respuestas de error siempre traen {\"mensaje\"} y, cuando aplica, \"motor\" y \"campos\"."
+  },
+  "variable": [
+    {
+      "key": "base",
+      "value": "http://localhost:8000"
+    }
+  ],
+  "item": [
+    {
+      "name": "General",
+      "item": [
+        {
+          "name": "Estado de los motores",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/api/estado",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "api",
+                "estado"
+              ]
+            },
+            "description": "200 si ambos motores responden, 503 si alguno está caído."
+          }
+        },
+        {
+          "name": "Catálogos",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/api/catalogos",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "api",
+                "catalogos"
+              ]
+            },
+            "description": ""
+          }
+        },
+        {
+          "name": "Cartelera futura",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/api/cartelera",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "api",
+                "cartelera"
+              ]
+            },
+            "description": "Funciones PROGRAMADA a futuro (PostgreSQL) con su ficha técnica (MongoDB)."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Caso 1 · Función con sus reseñas",
+      "item": [
+        {
+          "name": "Función 1 con reseñas",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/api/funciones/1/resenas",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "api",
+                "funciones",
+                "1",
+                "resenas"
+              ]
+            },
+            "description": "Ventas y ocupación desde PostgreSQL + ficha y reseñas desde MongoDB; separa las reseñas de quienes compraron para esa función."
+          }
+        },
+        {
+          "name": "Error 404 · función inexistente",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/api/funciones/99999/resenas",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "api",
+                "funciones",
+                "99999",
+                "resenas"
+              ]
+            },
+            "description": ""
+          }
+        },
+        {
+          "name": "Error 422 · identificador no numérico",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/api/funciones/abc/resenas",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "api",
+                "funciones",
+                "abc",
+                "resenas"
+              ]
+            },
+            "description": ""
+          }
+        }
+      ]
+    },
+    {
+      "name": "Caso 2 · Película con requisitos técnicos",
+      "item": [
+        {
+          "name": "Contrato 1 con requisitos",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/api/peliculas/1/requisitos",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "api",
+                "peliculas",
+                "1",
+                "requisitos"
+              ]
+            },
+            "description": "Contrato y funciones desde PostgreSQL + ficha técnica y requisitos_proyeccion desde MongoDB, con alertas de inconsistencias."
+          }
+        },
+        {
+          "name": "Error 404 · contrato inexistente",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/api/peliculas/999/requisitos",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "api",
+                "peliculas",
+                "999",
+                "requisitos"
+              ]
+            },
+            "description": ""
+          }
+        }
+      ]
+    },
+    {
+      "name": "Caso 3 · Ventas vs incidentes por sala",
+      "item": [
+        {
+          "name": "Cruce completo",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/api/salas/ventas-incidentes",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "api",
+                "salas",
+                "ventas-incidentes"
+              ]
+            },
+            "description": ""
+          }
+        },
+        {
+          "name": "Cruce por periodo",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/api/salas/ventas-incidentes?desde=2026-10-01&hasta=2026-10-10",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "api",
+                "salas",
+                "ventas-incidentes"
+              ],
+              "query": [
+                {
+                  "key": "desde",
+                  "value": "2026-10-01"
+                },
+                {
+                  "key": "hasta",
+                  "value": "2026-10-10"
+                }
+              ]
+            },
+            "description": ""
+          }
+        },
+        {
+          "name": "Error 422 · periodo invertido",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/api/salas/ventas-incidentes?desde=2026-10-10&hasta=2026-10-01",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "api",
+                "salas",
+                "ventas-incidentes"
+              ],
+              "query": [
+                {
+                  "key": "desde",
+                  "value": "2026-10-10"
+                },
+                {
+                  "key": "hasta",
+                  "value": "2026-10-01"
+                }
+              ]
+            },
+            "description": ""
+          }
+        },
+        {
+          "name": "Error 422 · fecha inválida",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/api/salas/ventas-incidentes?desde=ayer",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "api",
+                "salas",
+                "ventas-incidentes"
+              ],
+              "query": [
+                {
+                  "key": "desde",
+                  "value": "ayer"
+                }
+              ]
+            },
+            "description": ""
+          }
+        }
+      ]
+    },
+    {
+      "name": "Caso 4 · Historial del espectador",
+      "item": [
+        {
+          "name": "Espectador 22",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/api/espectadores/22/historial",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "api",
+                "espectadores",
+                "22",
+                "historial"
+              ]
+            },
+            "description": ""
+          }
+        },
+        {
+          "name": "Error 404 · espectador inexistente",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/api/espectadores/999/historial",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "api",
+                "espectadores",
+                "999",
+                "historial"
+              ]
+            },
+            "description": ""
+          }
+        }
+      ]
+    },
+    {
+      "name": "Transacción cruzada · Venta",
+      "item": [
+        {
+          "name": "Registrar venta WEB",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/api/ventas",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "api",
+                "ventas"
+              ]
+            },
+            "description": "CALL vender_boletas en PostgreSQL + comprobante en comprobantes_venta (MongoDB). Si MongoDB falla se hace ROLLBACK en PostgreSQL.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id_espectador\": 5,\n  \"id_funcion\": 44,\n  \"id_tipo_boleta\": 1,\n  \"cantidad\": 2,\n  \"canal\": \"WEB\",\n  \"id_staff\": null\n}"
+            }
+          }
+        },
+        {
+          "name": "Registrar venta TAQUILLA",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/api/ventas",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "api",
+                "ventas"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id_espectador\": 5,\n  \"id_funcion\": 44,\n  \"id_tipo_boleta\": 1,\n  \"cantidad\": 1,\n  \"canal\": \"TAQUILLA\",\n  \"id_staff\": 1\n}"
+            }
+          }
+        },
+        {
+          "name": "Error 503 · falla simulada en MongoDB (rollback)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/api/ventas",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "api",
+                "ventas"
+              ]
+            },
+            "description": "El comprobante viola el $jsonSchema; la venta no queda en PostgreSQL.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id_espectador\": 5,\n  \"id_funcion\": 44,\n  \"id_tipo_boleta\": 1,\n  \"cantidad\": 2,\n  \"canal\": \"WEB\",\n  \"id_staff\": null,\n  \"simular_falla_mongo\": true\n}"
+            }
+          }
+        },
+        {
+          "name": "Error 409 · función finalizada",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/api/ventas",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "api",
+                "ventas"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id_espectador\": 5,\n  \"id_funcion\": 1,\n  \"id_tipo_boleta\": 1,\n  \"cantidad\": 2,\n  \"canal\": \"WEB\",\n  \"id_staff\": null\n}"
+            }
+          }
+        },
+        {
+          "name": "Error 409 · empleado no taquillero",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/api/ventas",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "api",
+                "ventas"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id_espectador\": 5,\n  \"id_funcion\": 44,\n  \"id_tipo_boleta\": 1,\n  \"cantidad\": 2,\n  \"canal\": \"TAQUILLA\",\n  \"id_staff\": 8\n}"
+            }
+          }
+        },
+        {
+          "name": "Error 404 · espectador inexistente",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/api/ventas",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "api",
+                "ventas"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id_espectador\": 999,\n  \"id_funcion\": 44,\n  \"id_tipo_boleta\": 1,\n  \"cantidad\": 2,\n  \"canal\": \"WEB\",\n  \"id_staff\": null\n}"
+            }
+          }
+        },
+        {
+          "name": "Error 422 · datos inválidos",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/api/ventas",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "api",
+                "ventas"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id_funcion\": 44,\n  \"canal\": \"FAX\",\n  \"cantidad\": 11\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Transacción cruzada · Anulación",
+      "item": [
+        {
+          "name": "Anular venta",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/api/ventas/71/anulacion",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "api",
+                "ventas",
+                "71",
+                "anulacion"
+              ]
+            },
+            "description": "CALL anular_venta en PostgreSQL + incidente QUEJA_SERVICIO con reembolso en reportes_incidentes y actualización del comprobante en MongoDB. Cambiar el id por una venta PAGADA.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"motivo\": \"El espectador no puede asistir a la función\",\n  \"id_staff\": null\n}"
+            }
+          }
+        },
+        {
+          "name": "Error 409 · venta ya anulada",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/api/ventas/69/anulacion",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "api",
+                "ventas",
+                "69",
+                "anulacion"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"motivo\": \"Intento de anular por segunda vez\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Error 404 · venta inexistente",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/api/ventas/99999/anulacion",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "api",
+                "ventas",
+                "99999",
+                "anulacion"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"motivo\": \"Venta que no existe en la base\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Error 422 · motivo corto",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/api/ventas/2/anulacion",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "api",
+                "ventas",
+                "2",
+                "anulacion"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"motivo\": \"corto\"\n}"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
