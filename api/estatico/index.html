@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Pantalla Azul · Integración</title>
+  <link rel="stylesheet" href="/estatico/estilo.css">
+</head>
+<body>
+  <header class="cabecera">
+    <div class="contenedor">
+      <h1 class="logo">Pantalla Azul</h1>
+      <p class="subtitulo">Consola de integración: ventas en PostgreSQL, reseñas e incidentes en MongoDB.</p>
+      <div class="motores" id="motores"></div>
+    </div>
+  </header>
+
+  <main class="contenedor">
+    <nav class="pestanas" id="pestanas">
+      <button data-panel="funcion" class="activa">Función y reseñas</button>
+      <button data-panel="pelicula">Película y requisitos</button>
+      <button data-panel="cruce">Ventas vs incidentes</button>
+      <button data-panel="espectador">Historial espectador</button>
+      <button data-panel="vender">Vender boletas</button>
+      <button data-panel="anular">Anular venta</button>
+    </nav>
+
+    <section class="panel activo" id="panel-funcion">
+      <form class="formulario" data-accion="funcion">
+        <label class="campo">Función<input name="id_funcion" type="number" min="1" value="1" required></label>
+        <button class="boton primario">Consultar</button>
+      </form>
+    </section>
+
+    <section class="panel" id="panel-pelicula">
+      <form class="formulario" data-accion="pelicula">
+        <label class="campo">Película (contrato)<select name="id_contrato" data-catalogo="contratos"></select></label>
+        <button class="boton primario">Consultar</button>
+      </form>
+    </section>
+
+    <section class="panel" id="panel-cruce">
+      <form class="formulario" data-accion="cruce">
+        <label class="campo">Desde<input name="desde" type="date"></label>
+        <label class="campo">Hasta<input name="hasta" type="date"></label>
+        <button class="boton primario">Cruzar</button>
+      </form>
+    </section>
+
+    <section class="panel" id="panel-espectador">
+      <form class="formulario" data-accion="espectador">
+        <label class="campo">Espectador<input name="id_espectador" type="number" min="1" value="22" required></label>
+        <button class="boton primario">Consultar</button>
+      </form>
+    </section>
+
+    <section class="panel" id="panel-vender">
+      <form class="formulario" data-accion="vender">
+        <label class="campo ancho">Función programada<select name="id_funcion" id="cartelera"></select></label>
+        <label class="campo">Espectador<input name="id_espectador" type="number" min="1" value="5" required></label>
+        <label class="campo">Tipo de boleta<select name="id_tipo_boleta" data-catalogo="tipos_boleta"></select></label>
+        <label class="campo">Cantidad<input name="cantidad" type="number" min="1" max="10" value="2" required></label>
+        <label class="campo">Canal<select name="canal"><option>WEB</option><option>TAQUILLA</option></select></label>
+        <label class="campo">Taquillero<select name="id_staff" data-catalogo="taquilleros" data-vacio="Sin taquillero"></select></label>
+        <label class="casilla"><input name="simular_falla_mongo" type="checkbox"> Simular falla en MongoDB</label>
+        <button class="boton primario">Registrar venta</button>
+      </form>
+    </section>
+
+    <section class="panel" id="panel-anular">
+      <form class="formulario" data-accion="anular">
+        <label class="campo">Venta<input name="id_venta" type="number" min="1" required></label>
+        <label class="campo ancho">Motivo<input name="motivo" minlength="10" maxlength="150" value="El espectador no puede asistir a la función" required></label>
+        <label class="campo">Registra<select name="id_staff" data-catalogo="taquilleros" data-vacio="El espectador"></select></label>
+        <button class="boton primario">Anular venta</button>
+      </form>
+    </section>
+
+    <div id="alerta"></div>
+    <div id="resultado"></div>
+  </main>
+
+  <script src="/estatico/app.js"></script>
+</body>
+</html>
