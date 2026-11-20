@@ -1,0 +1,162 @@
+/* =========================================================
+   Tokens · dirección «sobrio de sistema»
+   Claro por defecto; oscuro solo si el sistema lo pide.
+   ========================================================= */
+:root {
+  /* Color */
+  --fondo: #f7f8fa;
+  --superficie: #ffffff;
+  --borde: #d9dee7;
+  --texto: #141a24;
+  --tenue: #5b6475;
+  --marca: #1d4ed8;
+  --sobre-marca: #ffffff;
+  --exito: #15803d;
+  --peligro: #b91c1c;
+  --aviso: #b45309;
+
+  /* Tipografía */
+  --fuente: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  --fuente-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --t-pequeno: 12.5px;
+  --t-base: 15px;
+  --t-sub: 17px;
+  --t-cifra: 21px;
+  --t-titulo: 26px;
+
+  /* Forma y espacio */
+  --radio-ctrl: 4px;
+  --radio-caja: 6px;
+  --esp-1: 4px;
+  --esp-2: 8px;
+  --esp-3: 12px;
+  --esp-4: 16px;
+  --esp-5: 24px;
+  --esp-6: 40px;
+
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --fondo: #0f141c;
+    --superficie: #151c27;
+    --borde: #263142;
+    --texto: #e6eaf0;
+    --tenue: #93a0b4;
+    --marca: #6b93f5;
+    --sobre-marca: #0b1220;
+    --exito: #4ade80;
+    --peligro: #f87171;
+    --aviso: #fbbf24;
+    color-scheme: dark;
+  }
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--fondo);
+  color: var(--texto);
+  font: var(--t-base)/1.55 var(--fuente);
+}
+
+h1, h2, h3 { font-family: var(--fuente); margin: 0; text-wrap: balance; }
+
+:focus-visible { outline: 2px solid var(--marca); outline-offset: 2px; }
+
+.contenedor { max-width: 1120px; margin: 0 auto; padding: 0 var(--esp-4); }
+
+/* Cabecera: fondo liso con franja de marca */
+.cabecera {
+  padding: var(--esp-6) 0 var(--esp-5);
+  border-top: 3px solid var(--marca);
+}
+
+.logo { font-size: var(--t-titulo); font-weight: 650; letter-spacing: -.01em; }
+.subtitulo { color: var(--tenue); margin: var(--esp-1) 0 var(--esp-3); max-width: 640px; }
+
+.motores { display: flex; gap: var(--esp-4); flex-wrap: wrap; }
+
+/* Estado: punto de color + texto, sin píldora */
+.insignia {
+  display: inline-flex; align-items: center; gap: 6px;
+  color: var(--tenue); font-size: var(--t-pequeno);
+}
+.insignia::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--tenue); flex: none; }
+.insignia.bien::before { background: var(--exito); }
+.insignia.mal::before { background: var(--peligro); }
+.insignia.alerta::before { background: var(--aviso); }
+
+/* Pestañas subrayadas */
+.pestanas {
+  display: flex; gap: var(--esp-5); overflow-x: auto;
+  border-bottom: 1px solid var(--borde); margin-bottom: var(--esp-4);
+}
+.pestanas button {
+  background: none; border: 0; border-bottom: 2px solid transparent; margin-bottom: -1px;
+  padding: var(--esp-2) 0; color: var(--tenue); font: inherit; cursor: pointer; white-space: nowrap;
+}
+.pestanas button:hover { color: var(--texto); }
+.pestanas button.activa { color: var(--texto); border-bottom-color: var(--marca); font-weight: 500; }
+
+.panel { display: none; }
+.panel.activo { display: block; }
+
+.formulario { display: flex; flex-wrap: wrap; gap: var(--esp-3); align-items: flex-end; }
+
+.campo { display: flex; flex-direction: column; gap: var(--esp-1); color: var(--tenue); font-size: var(--t-pequeno); min-width: 150px; }
+.campo.ancho { flex: 1 1 320px; }
+.campo input, .campo select {
+  background: var(--superficie); color: var(--texto); border: 1px solid var(--borde);
+  border-radius: var(--radio-ctrl); padding: 7px 10px; font: var(--t-base) var(--fuente);
+}
+.casilla { color: var(--tenue); font-size: var(--t-pequeno); display: flex; gap: var(--esp-2); align-items: center; padding-bottom: var(--esp-2); }
+
+.boton {
+  border-radius: var(--radio-ctrl); padding: 8px 16px; font: 500 var(--t-base) var(--fuente); cursor: pointer;
+  border: 1px solid var(--borde); background: var(--superficie); color: var(--texto);
+}
+.boton.primario { background: var(--marca); color: var(--sobre-marca); border-color: var(--marca); }
+.boton:disabled { opacity: .55; cursor: wait; }
+
+/* Mensajes */
+#alerta:not(:empty) {
+  margin-top: var(--esp-4); padding: var(--esp-3) var(--esp-4);
+  border: 1px solid var(--borde); border-left-width: 3px; border-radius: var(--radio-caja);
+  background: var(--superficie);
+}
+.alerta-error { border-left-color: var(--peligro) !important; }
+.alerta-exito { border-left-color: var(--exito) !important; }
+.alerta ul { margin: 6px 0 0; padding-left: 18px; color: var(--tenue); }
+
+#resultado { margin: var(--esp-4) 0 var(--esp-6); display: grid; gap: var(--esp-4); }
+
+.tarjeta { background: var(--superficie); border: 1px solid var(--borde); border-radius: var(--radio-caja); padding: var(--esp-4); min-width: 0; }
+.tarjeta h2 { font-size: var(--t-sub); font-weight: 600; margin-bottom: var(--esp-1); }
+.tarjeta h3 { font-size: var(--t-base); font-weight: 600; margin: var(--esp-4) 0 var(--esp-2); color: var(--tenue); }
+.tenue { color: var(--tenue); }
+
+/* Cifras sin caja: línea lateral */
+.cifras { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: var(--esp-4); margin-top: var(--esp-3); }
+.cifra { border-left: 2px solid var(--borde); padding-left: 10px; }
+.cifra strong { display: block; font-size: var(--t-cifra); font-weight: 600; font-variant-numeric: tabular-nums; }
+.cifra span { color: var(--tenue); font-size: var(--t-pequeno); }
+
+.origen { font-size: var(--t-pequeno); color: var(--tenue); margin: var(--esp-1) 0 0; }
+
+.tabla { width: 100%; border-collapse: collapse; font-size: 14px; font-variant-numeric: tabular-nums; }
+.tabla th { text-align: left; color: var(--tenue); font-weight: 500; }
+.tabla th, .tabla td { padding: var(--esp-2) 10px; border-bottom: 1px solid var(--borde); vertical-align: top; }
+.desplazable { overflow-x: auto; }
+
+.resena { border-top: 1px solid var(--borde); padding: 10px 0; }
+.estrellas { color: var(--aviso); letter-spacing: 1px; }
+
+details summary { cursor: pointer; color: var(--marca); }
+pre { white-space: pre-wrap; word-break: break-word; font: 12px/1.5 var(--fuente-mono); color: var(--tenue); max-height: 480px; overflow: auto; }
+
+@media (max-width: 600px) {
+  .campo { min-width: 100%; }
+}
