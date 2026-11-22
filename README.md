@@ -15,32 +15,35 @@ Grupo **Estallados**. Pantalla Azul es una cadena de cine independiente de Bogot
 ## Estructura
 
 ```
-postgresql/        DDL, datos de prueba, triggers, procedimientos y consultas
-mongodb/           colecciones con $jsonSchema, datos de prueba y consultas
-integracion/       conexión simultánea, casos de uso y transacciones cruzadas (Python)
-api/               API FastAPI + front (estatico/) + colección Postman
-diagramas/         modelo ER, modelo relacional y arquitectura políglota
-evidencias/        capturas de ejecución (postgresql/ y mongodb/)
-requirements.txt   dependencias de Python
+entrega-final/
+├── script-integracion/        conexión simultánea, casos de uso y transacciones cruzadas (Python)
+├── modulo-api/                API FastAPI + front (estatico/) + colección Postman
+├── informe-final-consolidado.pdf
+├── portafolio-individual/     reflexiones individuales ([nombre-estudiante]-reflexion.pdf)
+├── postgresql/                DDL, datos de prueba, triggers, procedimientos y consultas
+├── mongodb/                   colecciones con $jsonSchema, datos de prueba y consultas
+├── diagramas/                 modelo ER, modelo relacional y arquitectura políglota
+├── evidencias/                capturas de ejecución (postgresql/ y mongodb/)
+└── requirements.txt           dependencias de Python
 ```
 
 ## Fase 1 · PostgreSQL
 
 Ejecutar en orden sobre una base vacía (pgAdmin, psql o el editor SQL de Neon):
 
-1. `postgresql/01_creacion_tablas.sql`
-2. `postgresql/02_datos_prueba.sql`
-3. `postgresql/03_triggers.sql`
-4. `postgresql/04_procedimientos.sql`
-5. `postgresql/05_consultas.sql`
+1. `entrega-final/postgresql/01_creacion_tablas.sql`
+2. `entrega-final/postgresql/02_datos_prueba.sql`
+3. `entrega-final/postgresql/03_triggers.sql`
+4. `entrega-final/postgresql/04_procedimientos.sql`
+5. `entrega-final/postgresql/05_consultas.sql`
 
 ## Fase 2 · MongoDB
 
 Con `mongosh` o MongoDB Compass sobre la base `pantalla_azul`:
 
-1. `mongodb/01_creacion_colecciones.js`
-2. `mongodb/02_datos_prueba.js`
-3. `mongodb/03_consultas.js`
+1. `entrega-final/mongodb/01_creacion_colecciones.js`
+2. `entrega-final/mongodb/02_datos_prueba.js`
+3. `entrega-final/mongodb/03_consultas.js`
 
 ## Fase 3 · Integración funcional
 
@@ -49,20 +52,20 @@ Requiere Python 3.12 o superior, PostgreSQL con la fase 1 cargada y MongoDB con 
 ```powershell
 python -m venv env
 env\Scripts\activate
-pip install -r requirements.txt
+pip install -r entrega-final\requirements.txt
 ```
 
 En la raíz del proyecto se crea un archivo `.env` con la cadena de conexión de PostgreSQL (`POSTGRES_URL`) y la de MongoDB (`MONGO_URL`, `MONGO_BD`).
 
 ```powershell
-python integracion\preparar_demo.py
-python integracion\integracion.py demo
-uvicorn principal:app --app-dir api --port 8000
+python entrega-final\script-integracion\preparar_demo.py
+python entrega-final\script-integracion\integracion.py demo
+uvicorn principal:app --app-dir entrega-final\modulo-api --port 8000
 ```
 
 `preparar_demo.py` crea la colección `comprobantes_venta` con su `$jsonSchema`, los índices de integración y programa funciones futuras con sus requisitos técnicos para poder vender en la sustentación. Se puede ejecutar varias veces.
 
-Con la API arriba: front en `http://localhost:8000`, documentación interactiva en `http://localhost:8000/docs` y colección Postman en `api/pantalla_azul.postman_collection.json`.
+Con la API arriba: front en `http://localhost:8000`, documentación interactiva en `http://localhost:8000/docs` y colección Postman en `entrega-final/modulo-api/pantalla_azul.postman_collection.json`.
 
 ### Casos de uso
 

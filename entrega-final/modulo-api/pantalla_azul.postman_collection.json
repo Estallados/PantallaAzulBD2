@@ -2,7 +2,7 @@
   "info": {
     "name": "Pantalla Azul · Integración PostgreSQL + MongoDB",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "description": "Módulo de exposición de la entrega final. Ejecutar primero integracion/preparar_demo.py y levantar la API con uvicorn en el puerto 8000. Las respuestas de error siempre traen {\"mensaje\"} y, cuando aplica, \"motor\" y \"campos\"."
+    "description": "Módulo de exposición de la entrega final. Ejecutar primero entrega-final/script-integracion/preparar_demo.py y levantar la API con uvicorn en el puerto 8000. Las respuestas de error siempre traen {\"mensaje\"} y, cuando aplica, \"motor\" y \"campos\"."
   },
   "variable": [
     {

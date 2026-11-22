@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 from psycopg.rows import dict_row
 from pymongo import ASCENDING, MongoClient
 
-load_dotenv(Path(__file__).resolve().parent.parent / '.env')
+load_dotenv(Path(__file__).resolve().parents[2] / '.env')
 
 POSTGRES_URL = os.getenv('POSTGRES_URL', 'postgresql://postgres:postgres@localhost:5432/pantalla_azul')
 MONGO_URL = os.getenv('MONGO_URL', 'mongodb://localhost:27017')

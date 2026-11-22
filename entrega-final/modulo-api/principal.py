@@ -13,7 +13,7 @@ from pymongo.errors import ConnectionFailure, PyMongoError
 from starlette.exceptions import HTTPException
 
 CARPETA = Path(__file__).resolve().parent
-sys.path.insert(0, str(CARPETA.parent / 'integracion'))
+sys.path.insert(0, str(CARPETA.parent / 'script-integracion'))
 
 from casos_uso import cartelera, catalogos, funcion_con_resenas, historial_espectador, pelicula_con_requisitos, ventas_con_incidentes
 from conexion import ErrorIntegracion, estado_motores, preparar_mongo
